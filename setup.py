@@ -8,5 +8,5 @@ setup(
     description = "A collection of services for interacting with NLP data extracted from Stanford CoreNLP",
     license = "Other",
     packages = ["nlp_services"],
-    depends = ["corenlp_xml"]
+    depends = ["corenlp_xml", "flask", "flask-restful", "boto", "mrg_utils"]
     )
