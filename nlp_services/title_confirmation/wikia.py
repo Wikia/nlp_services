@@ -8,6 +8,8 @@ from StringIO import StringIO
 import phpserialize
 import json
 from . import preprocess
+from ..caching import cached_service_request
+from .. import RestfulResource
 
 # memoization variables
 TITLES = []
@@ -134,3 +136,29 @@ def get_redirects_for_wiki_id(wiki_id):
 
     CURRENT_WIKI_ID = wiki_id
     return REDIRECTS
+
+
+class AllTitlesService(RestfulResource):
+
+    """ Responsible for accessing all titles from database using title_confirmation module """
+    @cached_service_request
+    def get(self, wiki_id):
+        """ Extracts titles for a wiki from database
+        The module it uses stores this value memory when caching is off.
+        :param wiki_id: the id of the wiki
+        :return: response
+        """
+        return {'status': 200, wiki_id: list(get_titles_for_wiki_id(wiki_id))}
+
+
+class RedirectsService(RestfulResource):
+
+    """ Responsible for accessing list of redirects, correlating to their canonical title """
+    @cached_service_request
+    def get(self, wiki_id):
+        """ Gives us a dictionary of redirect to canonical title
+        In-memory caching when we don't have db caching.
+        :param wiki_id: the id of the wiki
+        :return: response
+        """
+        return {'status': 200, wiki_id: get_redirects_for_wiki_id(wiki_id)}

@@ -106,7 +106,7 @@ class HeadsCountService(RestfulResource):
         page_doc_ids = page_doc_response.get(wiki_id, [])
         hs = HeadsService()
         all_heads = [head
-                    for heads in filter(lambda x: x is not None, map(hs.get_nested, page_doc_ids))
+                    for heads in filter(lambda x: x is not None, map(hs.get_value, page_doc_ids))
                     for head in heads]
         single_heads = set(all_heads)
         return {'status': 200, wiki_id: dict(zip(single_heads, map(all_heads.count, single_heads)))}
@@ -123,7 +123,7 @@ class TopHeadsService(RestfulResource):
         :return: response
         :rtype: dict
         """
-        heads_to_counts = HeadsCountService().get_nested(wiki_id, {})
+        heads_to_counts = HeadsCountService().get_value(wiki_id, {})
         items = sorted(heads_to_counts.items(),
                        key=lambda item: int(item[1]),
                        reverse=True)
