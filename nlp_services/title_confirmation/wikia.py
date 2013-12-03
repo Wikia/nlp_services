@@ -3,13 +3,14 @@ try:
 except:
     pass #screw it
 from boto import connect_s3
-from gzip import GzipFile, open as gzopen
+from gzip import GzipFile
 from StringIO import StringIO
 import phpserialize
 import json
 from . import preprocess
-from ..caching import cached_service_request
 from .. import RestfulResource
+from ..caching import cached_service_request
+
 
 # memoization variables
 TITLES = []

@@ -5,7 +5,7 @@ Services focused on accessing and traversing syntactic data
 from . import RestfulResource
 from title_confirmation import preprocess
 from caching import cached_service_request
-from mrg_utils import Sentence as MrgSentence
+from mrg_utils.sentence import Sentence as MrgSentence
 
 import document_access
 

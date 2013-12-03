@@ -4,8 +4,6 @@ This submodule is used for referencing strings against data sources that connote
 
 from nltk.corpus import stopwords
 import re
-import wikia
-import wikipedia
 
 """ Memoization variables """
 USE_WIKIPEDIA = True
@@ -25,6 +23,8 @@ def preprocess(title):
                #500 chars should be plenty, todo fix unicode shit
                re.sub(' \(\w+\)', '', title.lower().replace('_', ' ')).split(' ')))[:500]
 
+from wikia import AllTitlesService
+from wikipedia import check_wp
 
 def confirm(title, wiki_id=None, use_wikipedia=None):
     """

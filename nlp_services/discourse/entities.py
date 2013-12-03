@@ -162,32 +162,6 @@ class CombinedEntityCountsService(BaseEntityCountsService):
     _entity_class = CombinedEntitiesService
 
 
-class BaseTopEntitiesService(RestfulResource):
-    _entities_service = None
-    """
-    Gets top 50 entities for a given wiki
-    """
-    @cached_service_request
-    def get(self, wiki_id):
-        counts_to_entities = self.entities_service().get_value(wiki_id, {})
-        items = sorted([(val, key) for key in counts_to_entities.keys() for val in counts_to_entities[key]],
-                       key=lambda item: int(item[1]),
-                       reverse=True)
-        return {'status': 200, wiki_id: items[:50]}
-
-
-class TopEntitiesService(BaseTopEntitiesService):
-    _entities_service = WikiEntitiesService
-
-
-class WpTopEntitiesService(BaseTopEntitiesService):
-    _entities_service = WpWikiEntitiesService
-
-
-class CombinedTopEntitiesService(BaseTopEntitiesService):
-    _entities_service = CombinedWikiEntitiesService
-
-
 class BaseWikiEntitiesService(RestfulResource):
     """
     Aggregates entities over a wiki
@@ -242,6 +216,32 @@ class WpWikiEntitiesService(BaseWikiEntitiesService):
 
 class CombinedWikiEntitiesService(BaseWikiEntitiesService):
     _entity_count_service = CombinedEntityCountsService
+
+
+class BaseTopEntitiesService(RestfulResource):
+    _entities_service = None
+    """
+    Gets top 50 entities for a given wiki
+    """
+    @cached_service_request
+    def get(self, wiki_id):
+        counts_to_entities = self.entities_service().get_value(wiki_id, {})
+        items = sorted([(val, key) for key in counts_to_entities.keys() for val in counts_to_entities[key]],
+                       key=lambda item: int(item[1]),
+                       reverse=True)
+        return {'status': 200, wiki_id: items[:50]}
+
+
+class TopEntitiesService(BaseTopEntitiesService):
+    _entities_service = WikiEntitiesService
+
+
+class WpTopEntitiesService(BaseTopEntitiesService):
+    _entities_service = WpWikiEntitiesService
+
+
+class CombinedTopEntitiesService(BaseTopEntitiesService):
+    _entities_service = CombinedWikiEntitiesService
 
 
 class BaseWikiPageEntitiesService(RestfulResource):
