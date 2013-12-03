@@ -24,7 +24,6 @@ def get_s3_bucket():
 
 
 def get_document_by_id(doc_id):
-
     service_response = ParsedXmlService().get(doc_id)
     document = None
     if service_response.get('status') == 200:
