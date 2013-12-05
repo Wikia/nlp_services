@@ -58,10 +58,17 @@ def bootstrap_sqlite_connection():
     Gets the sqlite connection, validating that it is well-formed first
     :return: sqlite connection
     """
-    if not os.path.exists(os.getcwd()+'/wp_titles.db'):
+    candidate_paths = map(lambda x: x+'/wp_titles.db',
+                          [os.path.dirname(os.path.realpath(__file__)),
+                           os.path.expanduser("~"),
+                           os.getcwd()])
+
+    db_paths = filter(os.path.exists, candidate_paths)
+
+    if len(db_paths) == 0:
         raise LookupError("The wp_titles.db file can't be found. "
                           "Please add it to the nlp_services.title_confirmation folder.")
-    conn = lite.connect('wp_titles.db')
+    conn = lite.connect(db_paths[-1])
     conn.text_factory = str
     cursor = conn.cursor()
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='titles'")
