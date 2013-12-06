@@ -1,6 +1,8 @@
 __author__ = 'relwell'
 
 from flask.ext import restful
+import title_confirmation
+import discourse
 
 
 class RestfulResource(restful.Resource):
