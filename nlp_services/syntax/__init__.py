@@ -2,12 +2,12 @@
 Services focused on accessing and traversing syntactic data
 """
 
-from . import RestfulResource
-from .title_confirmation import preprocess
-from .caching import cached_service_request
 from mrg_utils.sentence import Sentence as MrgSentence
 
-import document_access
+from . import RestfulResource
+from nlp_services.document_access import document_access
+from .title_confirmation import preprocess
+from .nlp_services.caching.caching import cached_service_request
 
 
 def get_pos_phrases(doc_id, phrases):

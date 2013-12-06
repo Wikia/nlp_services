@@ -2,13 +2,15 @@
 Classes for handling sentiment
 """
 
-import numpy
 from multiprocessing import Pool, Manager
-from ..caching import cached_service_request
-from .. import document_access
-from ..title_confirmation import preprocess, confirm
+from nlp_services.document_access import document_access
+
+import numpy
+from ..nlp_services.caching.caching import cached_service_request
+from ..title_confirmation import preprocess
 from .. import RestfulResource
 from .entities import CoreferenceCountsService, CombinedEntitiesService, WpEntitiesService
+
 
 USE_MULTIPROCESSING = False
 MP_NUM_CORES = 4

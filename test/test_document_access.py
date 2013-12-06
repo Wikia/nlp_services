@@ -1,10 +1,12 @@
-import os
 import sys
+
+from nlp_services.document_access import document_access
+import os
+
 sys.path.insert(0, os.path.join(".."))
 
 from mock import patch, Mock, MagicMock
 import unittest
-from nlp_services import document_access
 
 
 class MockBucket(Mock):

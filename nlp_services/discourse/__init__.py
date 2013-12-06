@@ -1,7 +1,7 @@
 __author__ = 'relwell'
 
 from .. import RestfulResource
-from ..caching import cached_service_request
+from ..nlp_services.caching.caching import cached_service_request
 import entities
 
 

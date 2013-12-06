@@ -2,14 +2,16 @@ try:
     from wikicities.DB import LoadBalancer
 except:
     pass #screw it
-from boto import connect_s3
 from gzip import GzipFile
 from StringIO import StringIO
-import phpserialize
 import json
+
+from boto import connect_s3
+import phpserialize
 from . import preprocess
 from .. import RestfulResource
-from ..caching import cached_service_request
+from ..nlp_services.caching.caching import cached_service_request
+
 
 
 # memoization variables
