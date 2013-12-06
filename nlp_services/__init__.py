@@ -17,10 +17,3 @@ class RestfulResource(restful.Resource):
         :return: whatever the return value of the method call is
         """
         return self.get(doc_id).get(doc_id, backoff)
-
-
-from . import caching
-from . import document_access
-from . import title_confirmation
-from . import syntax
-from . import discourse
