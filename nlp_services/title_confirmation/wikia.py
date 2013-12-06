@@ -10,7 +10,7 @@ from boto import connect_s3
 import phpserialize
 from . import preprocess
 from .. import RestfulResource
-from ..nlp_services.caching.caching import cached_service_request
+from ..caching import cached_service_request
 
 
 

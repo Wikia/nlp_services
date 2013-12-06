@@ -6,10 +6,10 @@ This doesn't scale, but in order to fix this, we'd need to entirely rewrite our 
 It costs money to re-cache this shit, so we're not doing that right now.
 """
 
+from .. import document_access
 from .. import RestfulResource
-from ..nlp_services.caching.caching import cached_service_request
-from nlp_services.document_access import document_access
-from ..nlp_services.syntax.syntax import AllNounPhrasesService
+from ..caching import cached_service_request
+from ..syntax import AllNounPhrasesService
 from ..title_confirmation import confirm, canonical, preprocess
 
 

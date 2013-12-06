@@ -6,8 +6,8 @@ from corenlp_xml.document import Document
 
 from boto import connect_s3
 from boto.s3.key import Key
-from . import RestfulResource
-from nlp_services.caching.caching import cached_service_request
+from .. import RestfulResource
+from ..caching import cached_service_request
 
 
 S3_BUCKET = None
