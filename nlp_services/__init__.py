@@ -2,7 +2,6 @@ __author__ = 'relwell'
 
 from flask.ext import restful
 
-
 class RestfulResource(restful.Resource):
 
     """
@@ -17,3 +16,9 @@ class RestfulResource(restful.Resource):
         :return: whatever the return value of the method call is
         """
         return self.get(doc_id).get(doc_id, backoff)
+
+import caching
+import document_access
+import title_confirmation
+import syntax
+import discourse
