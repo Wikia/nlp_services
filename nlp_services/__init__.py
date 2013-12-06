@@ -19,8 +19,8 @@ class RestfulResource(restful.Resource):
         return self.get(doc_id).get(doc_id, backoff)
 
 
-import caching
-import document_access
-import title_confirmation
-import syntax
-import discourse
+from . import caching
+from . import document_access
+from . import title_confirmation
+from . import syntax
+from . import discourse
