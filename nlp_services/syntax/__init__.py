@@ -78,8 +78,11 @@ class HeadsService(RestfulResource):
         if document is None:
             return {'status': 404, 'message': 'Document for %s not found' % doc_id}
 
-        retval = [preprocess(MrgSentence(sentence.parse_string).nodes.getTermHead().getString())
-                  for sentence in document.sentences]
+        retval = []
+        counter = 0
+        for sentence in document.sentences:
+            counter += 1
+            retval += [preprocess(MrgSentence(sentence.parse_string, counter).nodes.getTermHead().getString())]
 
         if len(retval) == 0:
             return {'status': 400, 'message': 'No sentences'}
