@@ -25,7 +25,7 @@ def get_pos_phrases(doc_id, phrases):
         leaves = [u" ".join(subtree.leaves())
                   for s in document.sentences
                   for subtree in s.parse.subtrees()
-                  if subtree.pos in phrases]
+                  if subtree.node in phrases]
 
     return leaves
 
