@@ -365,13 +365,13 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         return response
 
 
-class WikiPageToEntitiesService(RestfulResource):
+class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
     _entities_service = EntitiesService
 
 
-class WpPageToEntitiesService(RestfulResource):
+class WpPageToEntitiesService(BaseWikiPageToEntitiesService):
     _entities_service = WpEntitiesService
 
 
-class CombinedPageToEntitiesService(RestfulResource):
+class CombinedPageToEntitiesService(BaseWikiPageToEntitiesService):
     _entities_service = CombinedEntitiesService
