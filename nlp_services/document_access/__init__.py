@@ -6,6 +6,7 @@ from corenlp_xml.document import Document
 
 from boto import connect_s3
 from boto.s3.key import Key
+from lxml.etree import XMLSyntaxError
 from .. import RestfulResource
 from ..caching import cached_service_request
 
@@ -29,7 +30,11 @@ def get_document_by_id(doc_id):
     service_response = ParsedXmlService().get(doc_id)
     document = None
     if service_response.get('status') == 200:
-        document = Document(service_response[doc_id])
+        try:
+            document = Document(service_response[doc_id])
+        except XMLSyntaxError:
+            document = Document('<xml/>')
+
     return document
 
 
