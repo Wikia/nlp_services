@@ -90,6 +90,27 @@ class HeadsService(RestfulResource):
         return {'status': 200, doc_id: retval}
 
 
+class WikiToPageHeadsService(RestfulResource):
+    """
+    Provides heads for each page, as a caching hack
+    """
+    @cached_service_request
+    def get(self, wiki_id):
+        """
+        Gets all syntactic heads, grouped into counts, for every sentence in this wiki
+        ;param wiki_id: the id of the wiki
+        :return: response
+        :rtype: dict
+        """
+        page_doc_response = document_access.ListDocIdsService().get(wiki_id)
+        if page_doc_response['status'] != 200:
+            return page_doc_response
+
+        page_doc_ids = page_doc_response.get(wiki_id, [])
+        hs = HeadsService()
+        return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}
+
+
 class HeadsCountService(RestfulResource):
 
     """ Provides a count for all heads in a wiki """
