@@ -284,6 +284,7 @@ class CombinedWikiPageEntitiesService(BaseWikiPageEntitiesService):
 class BaseDocumentCountsService(RestfulResource):
     """ Counts the number of documents each entity appears in """
     _entity_count_service = None
+
     @cached_service_request
     def get(self, wiki_id):
         """ Given a wiki doc id, iterates over all documents available.
@@ -329,3 +330,48 @@ class WpEntityDocumentCountsService(BaseDocumentCountsService):
 
 class CombinedDocumentEntityCountsService(BaseDocumentCountsService):
     _entity_count_service = CombinedEntityCountsService
+
+
+class BaseWikiPageToEntitiesService(RestfulResource):
+    _entities_service = None
+
+    @cached_service_request
+    def get(self, wiki_id):
+        """ Given a wiki doc id, iterates over all documents available.
+        The response is a dictionary that keys documents to entities.
+        This is mostly for caching!
+        :param wiki_id: the id of the wiki
+        :type wiki_id: int|str
+        :rtype: dict
+        :return: response
+        """
+
+        page_doc_response = document_access.ListDocIdsService().get(wiki_id)
+        if page_doc_response['status'] != 200:
+            return page_doc_response
+
+        response = {'status': 200, wiki_id: {}}
+        entity_service = self._entities_service()
+
+        counter = 1
+        page_doc_ids = page_doc_response.get(wiki_id, [])
+        total = len(page_doc_ids)
+        print "Storing all entities for wiki", wiki_id
+        for page_doc_id in page_doc_ids:
+            response[wiki_id][page_doc_id] = entity_service.get_nested(page_doc_id, [])
+            counter += 1
+            print "%d / %d" % (counter, total)
+
+        return response
+
+
+class WikiPageToEntitiesToService(RestfulResource):
+    _entities_service = EntitiesService
+
+
+class WpPageToEntitiesService(RestfulResource):
+    _entities_service = WpEntitiesService
+
+
+class CombinedPageToEntitiesService(RestfulResource):
+    _entities_service = CombinedEntitiesService
