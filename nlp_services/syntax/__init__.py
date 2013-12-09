@@ -97,7 +97,7 @@ class WikiToPageHeadsService(RestfulResource):
     @cached_service_request
     def get(self, wiki_id):
         """
-        Gets all syntactic heads, grouped into counts, for every sentence in this wiki
+        Gets all syntactic heads, by page ID, for every sentence in this wiki
         ;param wiki_id: the id of the wiki
         :return: response
         :rtype: dict
@@ -108,7 +108,7 @@ class WikiToPageHeadsService(RestfulResource):
 
         page_doc_ids = page_doc_response.get(wiki_id, [])
         hs = HeadsService()
-        return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}
+        return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}W
 
 
 class HeadsCountService(RestfulResource):
