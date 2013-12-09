@@ -108,7 +108,7 @@ class WikiToPageHeadsService(RestfulResource):
 
         page_doc_ids = page_doc_response.get(wiki_id, [])
         hs = HeadsService()
-        return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}W
+        return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}
 
 
 class HeadsCountService(RestfulResource):
