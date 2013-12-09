@@ -365,7 +365,7 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         return response
 
 
-class WikiPageToEntitiesToService(RestfulResource):
+class WikiPageToEntitiesService(RestfulResource):
     _entities_service = EntitiesService
 
 
