@@ -356,11 +356,10 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])
         total = len(page_doc_ids)
-        print "Storing all entities for wiki", wiki_id
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
             counter += 1
-            print "%d / %d" % (counter, total)
+            # print "%d / %d" % (counter, total)
 
         return response
 
