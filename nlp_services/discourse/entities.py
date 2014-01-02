@@ -354,13 +354,13 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         response = {'status': 200, wiki_id: {}}
         entity_service = self._entities_service()
 
-        counter = 1
+        counter = 0
         page_doc_ids = page_doc_response.get(wiki_id, [])
         total = len(page_doc_ids)
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
             counter += 1
-            # print "%d / %d" % (counter, total)
+            print "%d / %d" % (counter, total)
 
         return response
 
