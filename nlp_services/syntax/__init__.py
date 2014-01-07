@@ -9,6 +9,8 @@ from .. import document_access
 from ..title_confirmation import preprocess
 from ..caching import cached_service_request
 
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE, SIG_DFL)
 
 def get_pos_phrases(doc_id, phrases):
     """

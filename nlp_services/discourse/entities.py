@@ -12,6 +12,8 @@ from ..caching import cached_service_request
 from ..syntax import AllNounPhrasesService
 from ..title_confirmation import confirm, canonical, preprocess
 
+from signal import signal, SIGPIPE, SIG_DFL
+signal(SIGPIPE, SIG_DFL)
 
 class CoreferenceCountsService(RestfulResource):
 
