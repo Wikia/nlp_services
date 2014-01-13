@@ -5,6 +5,7 @@ Classes for handling sentiment
 from multiprocessing import Pool, Manager
 
 import numpy
+import string
 from nltk.tree import Tree
 from ..caching import cached_service_request
 from ..title_confirmation import preprocess
@@ -69,7 +70,7 @@ class DocumentSentimentService(RestfulResource):
         for sentence in document.sentences:
             self.traverse_tree_for_sentiment(sentence)
 
-        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(x[1])) for x in self.phrases_to_sentiment.items()])
+        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(filter(lambda y: y is not None, x[1]))) for x in self.phrases_to_sentiment.items()])
 
         return {'status': 200, doc_id: response}
 
@@ -83,19 +84,21 @@ class DocumentSentimentService(RestfulResource):
         :return: None, stores values in class as side effect
         :rtype: None
         """
+        exclude = set(string.punctuation)
         try:
             if subtree is None:
                 subtree = sentence.parse
             if not isinstance(subtree, Tree):
                 return None
-            flattened = ' '.join(subtree.leaves())
+            flattened = preprocess(' '.join(subtree.leaves()))
             if flattened in self.val_to_canonical:
-                self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(flattened, []) \
+                self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(self.val_to_canonical[flattened], []) \
                                                        + [sentence.sentiment]
                 return None  # no need to keep going
+            elif subtree.node in ['NP', 'NNS', 'NN', 'NNP', 'NNPS', 'VBG'] and flattened.strip() != '':
+                self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(flattened, []) + [sentence.sentiment]
 
-            for i in range(0, len(subtree)):
-                self.traverse_tree_for_sentiment(sentence, subtree[i])
+            map(lambda x: self.traverse_tree_for_sentiment(sentence, x), filter(lambda x: isinstance(x, Tree), subtree))
         except UnicodeEncodeError:
             pass
         return None
