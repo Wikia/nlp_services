@@ -3,12 +3,12 @@ Classes for handling sentiment
 """
 
 from multiprocessing import Pool, Manager
-from nlp_services.document_access import document_access
 
 import numpy
 from ..caching import cached_service_request
 from ..title_confirmation import preprocess
 from .. import RestfulResource
+from .. import document_access
 from .entities import CoreferenceCountsService, CombinedEntitiesService, WpEntitiesService
 
 
