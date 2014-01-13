@@ -92,7 +92,7 @@ class DocumentSentimentService(RestfulResource):
                 return None  # no need to keep going
 
             for i in range(0, len(subtree)):
-                self.traverse_tree_for_sentiment(sentence, subtree)
+                self.traverse_tree_for_sentiment(sentence, subtree[i])
         except UnicodeEncodeError:
             pass
         return None
