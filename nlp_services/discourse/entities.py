@@ -30,14 +30,15 @@ class CoreferenceCountsService(RestfulResource):
 
         mention_counts = dict()
         representative_to_mentions = dict()
-        for coreference in document.coreferences:
-            representative = coreference.representative
-            rep_string = unicode(representative.tokens)
-            sibling_strings = [unicode(mention.tokens) for mention in representative.siblings]
-            representative_to_mentions[rep_string] = representative_to_mentions.get(rep_string, []) + sibling_strings
-            mention_counts[rep_string] = mention_counts.get(rep_string, 0) + 1
-            for sib_string in sibling_strings:
-                mention_counts[sib_string] = mention_counts.get(sib_string, 0) + 1
+        if document.coreferences is not None:
+            for coreference in document.coreferences:
+                representative = coreference.representative
+                rep_string = unicode(representative.tokens)
+                sibling_strings = [unicode(mention.tokens) for mention in representative.siblings]
+                representative_to_mentions[rep_string] = representative_to_mentions.get(rep_string, []) + sibling_strings
+                mention_counts[rep_string] = mention_counts.get(rep_string, 0) + 1
+                for sib_string in sibling_strings:
+                    mention_counts[sib_string] = mention_counts.get(sib_string, 0) + 1
 
         return {doc_id: {'mentionCounts': mention_counts, 'paraphrases': representative_to_mentions}, 'status': 200}
 
