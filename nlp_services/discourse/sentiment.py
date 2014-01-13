@@ -88,7 +88,7 @@ class DocumentSentimentService(RestfulResource):
                 subtree = sentence.parse
             if not isinstance(subtree, Tree):
                 return None
-            flattened = str(subtree.flatten())
+            flattened = ' '.join(subtree.leaves())
             if flattened in self.val_to_canonical:
                 self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(flattened, []) \
                                                        + [sentence.sentiment]
