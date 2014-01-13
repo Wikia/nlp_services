@@ -69,7 +69,7 @@ class DocumentSentimentService(RestfulResource):
         for sentence in document.sentences:
             self.traverse_tree_for_sentiment(sentence)
 
-        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(x[1])) for x in self.phrasesToSentiment.items()])
+        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(x[1])) for x in self.phrases_to_sentiment.items()])
 
         return {'status': 200, doc_id: response}
 
