@@ -5,6 +5,7 @@ Classes for handling sentiment
 from multiprocessing import Pool, Manager
 
 import numpy
+from nltk.tree import Tree
 from ..caching import cached_service_request
 from ..title_confirmation import preprocess
 from .. import RestfulResource
@@ -85,6 +86,8 @@ class DocumentSentimentService(RestfulResource):
         try:
             if subtree is None:
                 subtree = sentence.parse
+            if not isinstance(subtree, Tree):
+                return None
             flattened = str(subtree.flatten())
             if flattened in self.val_to_canonical:
                 self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(flattened, []) \
