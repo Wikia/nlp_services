@@ -32,7 +32,7 @@ class CoreferenceCountsService(RestfulResource):
         representative_to_mentions = dict()
         for coreference in document.coreferences:
             representative = coreference.representative
-            rep_string = str(representative.tokens)
+            rep_string = unicode(representative.tokens)
             sibling_strings = [str(mention.tokens) for mention in representative.siblings]
             representative_to_mentions[rep_string] = representative_to_mentions.get(rep_string, []) + sibling_strings
             mention_counts[rep_string] = mention_counts.get(rep_string, 0) + 1
