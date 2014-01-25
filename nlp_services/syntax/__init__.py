@@ -60,7 +60,7 @@ class AllVerbPhrasesService(RestfulResource):
         :return: a response in the proper format
         :rtype: dict
         """
-        return {doc_id: get_pos_phrases.get(doc_id, [u'VP']), 'status': 200}
+        return {doc_id: get_pos_phrases(doc_id, [u'VP']), 'status': 200}
 
 
 class HeadsService(RestfulResource):
