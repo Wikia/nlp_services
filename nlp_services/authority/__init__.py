@@ -10,7 +10,7 @@ import json
 class PreCachedService(RestfulResource):
 
     def __init__(self):
-        self.bucket = connect_s3().bucket('nlp-data')
+        self.bucket = connect_s3().get_bucket('nlp-data')
 
     def get(self, doc_id):
         key = self.bucket.get_key('service_responses/%s/%s.get' % (doc_id.replace('_', '/'), self.__class__.__name__))
