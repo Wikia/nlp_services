@@ -3,27 +3,33 @@ This is an interface for authority data access within this library
 """
 
 from .. import RestfulResource
+from boto import connect_s3
+import json
 
 
-class PageAuthorityService(RestfulResource):
+class PreCachedService(RestfulResource):
+
+    def __init__(self):
+        self.bucket = connect_s3().bucket('nlp-data')
 
     def get(self, doc_id):
-        raise NotImplementedError("If this isn't cached, you don't get it")
+        key = self.bucket.get_key('service_responses/%s/%s.get' % (doc_id.replace('_', '/'), self.__class__.__name__))
+        if key is None or not key.exists():
+            return {'status': 500, 'message': 'Not pre-cached'}
+        return {doc_id: json.loads(key.get_contents_as_string())}
 
 
-class WikiAuthorityService(RestfulResource):
-
-    def get(self, wiki_id):
-        raise NotImplementedError("This needs to be cached, sucka")
+class PageAuthorityService(PreCachedService):
+    pass
 
 
-class WikiPageRankService(RestfulResource):
-
-    def get(self, wiki_id):
-        raise NotImplementedError("Why ain't you cached this awready")
+class WikiAuthorityService(PreCachedService):
+    pass
 
 
-class WikiAuthorCentralityService(RestfulResource):
+class WikiPageRankService(PreCachedService):
+    pass
 
-    def get(self, wiki_id):
-        raise NotImplementedError("Gotta cache it first")
+
+class WikiAuthorCentralityService(PreCachedService):
+    pass
