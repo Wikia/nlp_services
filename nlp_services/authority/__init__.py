@@ -3,7 +3,10 @@ This is an interface for authority data access within this library
 """
 
 from .. import RestfulResource
+from ..caching import cached_service_request
+from ..discourse.entities import WikiPageToEntitiesService
 from boto import connect_s3
+from multiprocessing import Pool
 import json
 
 
@@ -33,3 +36,70 @@ class WikiPageRankService(PreCachedService):
 
 class WikiAuthorCentralityService(PreCachedService):
     pass
+
+
+class WikiAuthorsToPagesService(RestfulResource):
+
+    @cached_service_request
+    def get(self, wiki_id):
+        resp = WikiAuthorityService().get(wiki_id)
+        if resp.get('status', 500) == 500:
+            return resp
+
+        def mapper(doc_id):
+            return doc_id, PageAuthorityService().get_value(doc_id)
+
+        # need to find a way to manage number of processes across library
+        p = Pool(processes=32)
+        r = p.map(mapper, resp[wiki_id].keys())
+        r.wait()
+
+        author_to_pages = {}
+        for doc_id, authors in r.get():
+            for author in authors:
+                author_to_pages[author] = author_to_pages.get(author, []) + [(doc_id, author['contribs'])]
+
+        for author in author_to_pages:
+            author_to_pages[author] = dict(author_to_pages[author])
+
+        return {'status': 200, wiki_id: author_to_pages}
+
+
+class WikiAuthorTopicAuthorityService(RestfulResource):
+
+    @cached_service_request
+    def get(self, wiki_id):
+        wpe_resp = WikiPageToEntitiesService().get(wiki_id)
+        if wpe_resp.get('status', 500) == 500:
+            return wpe_resp
+        pages_to_entities = wpe_resp[wiki_id]
+
+        watp_resp = WikiAuthorsToPagesService().get(wiki_id)
+        if watp_resp.get('status', 500) == 500:
+            return watp_resp
+        authors_to_pages = watp_resp[wiki_id]
+
+        was_resp = WikiAuthorityService().get(wiki_id)
+        if was_resp.get('status', 500) == 500:
+            return was_resp
+        pages_to_authority = was_resp[wiki_id]
+
+        authors_to_entities = {}
+        authors_to_entities_weighted = {}
+        # todo async
+        for page in pages_to_entities:
+            entity_list = list(set(page.get('redirects', {}).values() + page.get('titles')))
+            for author, author_contribs in filter(lambda x: page in x[1], authors_to_pages.items()):
+                if author not in authors_to_entities:
+                    authors_to_entities[author] = dict()
+                if author not in authors_to_entities_weighted[author]:
+                    authors_to_entities_weighted[author] = dict()
+                for entity in entity_list:
+                    authors_to_entities[author][entity] = (authors_to_entities[author].get(entity, 0)
+                                                           + pages_to_authority[page])
+                    authors_to_entities_weighted[author][entity] = (authors_to_entities[author].get(entity, 0)
+                                                                    + pages_to_authority[page] * author_contribs[page])
+
+        return {'status': 200, wiki_id: authors_to_entities}
+
+
