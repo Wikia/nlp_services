@@ -100,6 +100,6 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
                     authors_to_entities_weighted[author][entity] = (authors_to_entities[author].get(entity, 0)
                                                                     + pages_to_authority[page] * author_contribs[page])
 
-        return {'status': 200, wiki_id: authors_to_entities}
+        return {'status': 200, wiki_id: {'unweighted': authors_to_entities, 'weighted': authors_to_entities_weighted}}
 
 
