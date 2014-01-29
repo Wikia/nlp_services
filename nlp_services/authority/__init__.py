@@ -48,7 +48,6 @@ class WikiAuthorsToIdsService(RestfulResource):
     def get(self, wiki_id):
         resp = WikiAuthorityService().get(wiki_id)
         if resp.get('status', 500) == 500:
-            print resp
             return resp
 
         # need to find a way to manage number of processes across library
@@ -65,7 +64,6 @@ class WikiAuthorsToPagesService(RestfulResource):
     def get(self, wiki_id):
         resp = WikiAuthorityService().get(wiki_id)
         if resp.get('status', 500) == 500:
-            print resp
             return resp
 
         # need to find a way to manage number of processes across library
@@ -107,7 +105,6 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
         authors_to_entities = {}
         authors_to_entities_weighted = {}
         # todo async
-        print pages_to_entities
         for page, entity_data in pages_to_entities.items():
             entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
             for author, author_contribs in filter(lambda x: page in x[1], authors_to_pages.items()):
