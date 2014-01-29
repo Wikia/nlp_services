@@ -98,7 +98,7 @@ class WikiTopicAuthorityService(RestfulResource):
         pages_to_authority = was_resp[wiki_id]
 
         topics_to_authority = dict()
-        min_authority = min(pages_to_entities.values())
+        min_authority = min(pages_to_authority.values())
         for doc_id, entity_data in pages_to_entities.items():
             entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
             for entity in entity_list:
