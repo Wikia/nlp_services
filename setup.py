@@ -10,5 +10,5 @@ setup(
     packages = ["nlp_services", "nlp_services.caching", "nlp_services.discourse",
                 "nlp_services.document_access", "nlp_services.syntax",
                 "nlp_services.title_confirmation", "nlp_services.authority"],
-    depends = ["corenlp_xml", "flask", "flask-restful", "boto", "mrg_utils"]
+    requires = ["corenlp_xml", "flask", "flask-restful", "boto", "mrg_utils"]
     )

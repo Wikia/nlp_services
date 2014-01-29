@@ -83,6 +83,32 @@ class WikiAuthorsToPagesService(RestfulResource):
         return {'status': 200, wiki_id: author_to_pages}
 
 
+class WikiTopicAuthorityService(RestfulResource):
+
+    @cached_service_request
+    def get(self, wiki_id):
+        wpe_resp = WikiPageToEntitiesService().get(wiki_id)
+        if wpe_resp.get('status', 500) == 500:
+            return wpe_resp
+        pages_to_entities = wpe_resp[wiki_id]
+
+        was_resp = WikiAuthorityService().get(wiki_id)
+        if was_resp.get('status', 500) == 500:
+            return was_resp
+        pages_to_authority = was_resp[wiki_id]
+
+        topics_to_authority = dict()
+        min_authority = min(pages_to_entities.values())
+        for doc_id, entity_data in pages_to_entities.items():
+            entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
+            for entity in entity_list:
+                topics_to_authority[entity] = (
+                    topics_to_authority.get(entity, 0) + pages_to_authority.get(doc_id, min_authority)
+                )
+
+        return {'status': 200, wiki_id: topics_to_authority}
+
+
 class WikiAuthorTopicAuthorityService(RestfulResource):
 
     @cached_service_request
