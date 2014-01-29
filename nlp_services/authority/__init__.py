@@ -19,7 +19,7 @@ class PreCachedService(RestfulResource):
         key = self.bucket.get_key('service_responses/%s/%s.get' % (doc_id.replace('_', '/'), self.__class__.__name__))
         if key is None or not key.exists():
             return {'status': 500, 'message': 'Not pre-cached'}
-        return {doc_id: json.loads(key.get_contents_as_string())}
+        return {'status': 200, doc_id: json.loads(key.get_contents_as_string())}
 
 
 class PageAuthorityService(PreCachedService):
@@ -38,26 +38,46 @@ class WikiAuthorCentralityService(PreCachedService):
     pass
 
 
+def watp_mapper(doc_id):
+    return doc_id, PageAuthorityService().get_value(doc_id)
+
+
+class WikiAuthorsToIdsService(RestfulResource):
+
+    @cached_service_request
+    def get(self, wiki_id):
+        resp = WikiAuthorityService().get(wiki_id)
+        if resp.get('status', 500) == 500:
+            print resp
+            return resp
+
+        # need to find a way to manage number of processes across library
+        p = Pool(processes=32)
+        r = p.map_async(watp_mapper, resp[wiki_id].keys())
+        r.wait()
+
+        return {'status': 200, wiki_id: dict([(a['user'], a['userid']) for page, authors in r.get() for a in authors])}
+
+
 class WikiAuthorsToPagesService(RestfulResource):
 
     @cached_service_request
     def get(self, wiki_id):
         resp = WikiAuthorityService().get(wiki_id)
         if resp.get('status', 500) == 500:
+            print resp
             return resp
-
-        def mapper(doc_id):
-            return doc_id, PageAuthorityService().get_value(doc_id)
 
         # need to find a way to manage number of processes across library
         p = Pool(processes=32)
-        r = p.map(mapper, resp[wiki_id].keys())
+        r = p.map_async(watp_mapper, resp[wiki_id].keys())
         r.wait()
 
         author_to_pages = {}
         for doc_id, authors in r.get():
             for author in authors:
-                author_to_pages[author] = author_to_pages.get(author, []) + [(doc_id, author['contribs'])]
+                author_to_pages[author['user']] = (author_to_pages.get(author['user'], [])
+                                                   + [(doc_id, author['contribs'])])
 
         for author in author_to_pages:
             author_to_pages[author] = dict(author_to_pages[author])
@@ -87,12 +107,13 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
         authors_to_entities = {}
         authors_to_entities_weighted = {}
         # todo async
-        for page in pages_to_entities:
-            entity_list = list(set(page.get('redirects', {}).values() + page.get('titles')))
+        print pages_to_entities
+        for page, entity_data in pages_to_entities.items():
+            entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
             for author, author_contribs in filter(lambda x: page in x[1], authors_to_pages.items()):
                 if author not in authors_to_entities:
                     authors_to_entities[author] = dict()
-                if author not in authors_to_entities_weighted[author]:
+                if author not in authors_to_entities_weighted:
                     authors_to_entities_weighted[author] = dict()
                 for entity in entity_list:
                     authors_to_entities[author][entity] = (authors_to_entities[author].get(entity, 0)
