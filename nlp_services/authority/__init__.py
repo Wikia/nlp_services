@@ -147,3 +147,29 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
         return {'status': 200, wiki_id: {'unweighted': authors_to_entities, 'weighted': authors_to_entities_weighted}}
 
 
+class WikiTopicsToAuthorityService(RestfulResource):
+
+    @cached_service_request
+    def get(self, wiki_id):
+        tta_resp = WikiTopicAuthorityService().get(wiki_id)
+        if tta_resp.get('status', 500) != 200:
+            return tta_resp
+        topics_to_authority = tta_resp[wiki_id]
+        tta_items = topics_to_authority.items()
+
+        taresp = WikiAuthorTopicAuthorityService().get(wiki_id)
+        if taresp.get('status', 500) != 200:
+            return taresp
+        topic_authority_data = taresp[wiki_id]
+
+        topics_and_authors = [dict(topic=topic, author=author, topic_authority=authority)
+                              for author, topics_to_authority in topic_authority_data['weighted'].items()
+                              for topic, authority in tta_items]
+        resp = [(topic,
+                 dict(authority=authority,
+                      authors=sorted(filter(lambda x: x['topic'] == topic, topics_and_authors),
+                                     key=lambda y: y['topic_authority'],
+                                     reverse=True)[:10])
+                 )
+                for topic, authority in tta_items]
+        return {'status': 200, wiki_id: resp}
