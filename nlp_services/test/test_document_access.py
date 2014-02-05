@@ -1,9 +1,9 @@
 import sys
 
-from nlp_services.document_access import document_access
+from .. import document_access
 import os
 
-sys.path.insert(0, os.path.join(".."))
+sys.path.insert(0, os.path.join("../"))
 
 from mock import patch, Mock, MagicMock
 import unittest
