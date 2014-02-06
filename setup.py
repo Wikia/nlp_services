@@ -16,6 +16,5 @@ setup(
     dependency_links=["https://github.com/relwell/corenlp-xml-lib/archive/master.zip#egg=corenlp_xml-0.0.1",
                       "https://github.com/relwell/mrg_utils/archive/master.zip#egg=mrg_utils-0.0.1"
                       ],
-    data_files = [("nlp_services/data", ["nlp_services/data/hostnames.json"])],
     test_suite="nlp_services.test.suite"
     )
