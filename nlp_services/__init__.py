@@ -23,3 +23,4 @@ import title_confirmation
 import document_access
 import discourse
 import syntax
+import wikia_utils

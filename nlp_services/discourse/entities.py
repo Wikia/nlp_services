@@ -12,7 +12,6 @@ from ..caching import cached_service_request
 from ..syntax import AllNounPhrasesService
 from ..title_confirmation import confirm, canonical, preprocess
 
-
 class CoreferenceCountsService(RestfulResource):
 
     """
@@ -360,7 +359,7 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
             counter += 1
-            # print "%d / %d" % (counter, total)
+            #print "%d / %d" % (counter, total)
 
         return response
 

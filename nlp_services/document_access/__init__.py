@@ -2,6 +2,7 @@
 Responsible for pulling down data from AWS
 """
 
+import socket
 from corenlp_xml.document import Document
 
 from boto import connect_s3

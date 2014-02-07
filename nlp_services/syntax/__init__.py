@@ -9,7 +9,6 @@ from .. import document_access
 from ..title_confirmation import preprocess
 from ..caching import cached_service_request
 
-
 def get_pos_phrases(doc_id, phrases):
     """
     Given a doc ID, return a list of
@@ -58,7 +57,7 @@ class AllVerbPhrasesService(RestfulResource):
         :return: a response in the proper format
         :rtype: dict
         """
-        return {doc_id: get_pos_phrases.get(doc_id, [u'VP']), 'status': 200}
+        return {doc_id: get_pos_phrases(doc_id, [u'VP']), 'status': 200}
 
 
 class HeadsService(RestfulResource):
