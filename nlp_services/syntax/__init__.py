@@ -9,9 +9,6 @@ from .. import document_access
 from ..title_confirmation import preprocess
 from ..caching import cached_service_request
 
-from signal import signal, SIGPIPE, SIG_DFL
-signal(SIGPIPE, SIG_DFL)
-
 def get_pos_phrases(doc_id, phrases):
     """
     Given a doc ID, return a list of
@@ -109,9 +106,6 @@ class WikiToPageHeadsService(RestfulResource):
             return page_doc_response
 
         page_doc_ids = page_doc_response.get(wiki_id, [])
-        total = len(page_doc_ids)
-        response = {'status': 200, wiki_id: {}}
-        counter = 0
         hs = HeadsService()
         return {'status': 200, wiki_id: dict([(doc_id, hs.get_value(doc_id, [])) for doc_id in page_doc_ids])}
 
