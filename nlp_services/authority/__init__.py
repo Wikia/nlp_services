@@ -181,7 +181,7 @@ class WikiTopicsToAuthorityService(RestfulResource):
         for topic, authority in tta_items:
             resp[topic]['authority'] = authority
             resp[topic]['authors'] = sorted(resp[topic]['authors'],
-                                            lambda x: x.get('topic_authority', 0),
+                                            key=lambda x: x.get('topic_authority', 0),
                                             reverse=True)[:20]
 
         return {'status': 200, wiki_id: resp.items()}
