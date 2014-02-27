@@ -177,11 +177,11 @@ class WikiTopicsToAuthorityService(RestfulResource):
             for topic, obj in tuple_list:
                 resp[topic]['authors'] = resp[topic].get('authors', []) + [obj]
 
-        print resp[topic]
-
         print "Sorting"
         for topic, authority in tta_items:
             resp[topic]['authority'] = authority
-            resp[topic]['authors'] = sorted(resp[topic]['authors'], lambda x: x['topic_authority'], reverse=True)[:20]
+            resp[topic]['authors'] = sorted(resp[topic]['authors'],
+                                            lambda x: x.get('topic_authority', 0),
+                                            reverse=True)[:20]
 
         return {'status': 200, wiki_id: resp.items()}
