@@ -180,6 +180,7 @@ class WikiTopicsToAuthorityService(RestfulResource):
         print "Sorting"
         for topic, authority in tta_items:
             resp[topic]['authority'] = authority
+            print resp[topic]['authors']
             resp[topic]['authors'] = sorted(resp[topic]['authors'],
                                             key=lambda x: x.get('topic_authority', 0),
                                             reverse=True)[:20]
