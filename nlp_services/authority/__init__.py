@@ -183,7 +183,6 @@ class WikiTopicsToAuthorityService(RestfulResource):
                 #  why is this happening?
                 continue
             resp[topic]['authority'] = authority
-            print resp[topic]['authors']
             resp[topic]['authors'] = sorted(resp[topic]['authors'],
                                             key=lambda x: x.get('topic_authority', 0),
                                             reverse=True)[:20]
