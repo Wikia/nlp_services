@@ -5,8 +5,9 @@ This is an interface for authority data access within this library
 from .. import RestfulResource
 from ..caching import cached_service_request
 from ..discourse.entities import WikiPageToEntitiesService
+from ..pooling import pool
 from boto import connect_s3
-from multiprocessing import Pool
+from collections import defaultdict
 import json
 
 
@@ -66,8 +67,7 @@ class WikiAuthorsToPagesService(RestfulResource):
         if resp.get('status', 500) == 500:
             return resp
 
-        # need to find a way to manage number of processes across library
-        p = Pool(processes=32)
+        p = pool()
         r = p.map_async(watp_mapper, resp[wiki_id].keys())
         r.wait()
 
@@ -147,34 +147,39 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
         return {'status': 200, wiki_id: {'unweighted': authors_to_entities, 'weighted': authors_to_entities_weighted}}
 
 
+def topic_authority_tuple_to_obj(tup):
+    author, topics = tup
+    return [(topic, dict(topic=topic, author=author, topic_authority=authority))
+            for topic, authority in topics.items()]
+
+
 class WikiTopicsToAuthorityService(RestfulResource):
 
     @cached_service_request
     def get(self, wiki_id):
+        print "Getting Wiki Topic Authority"
         tta_resp = WikiTopicAuthorityService().get(wiki_id)
         if tta_resp.get('status', 500) != 200:
             return tta_resp
         topics_to_authority = tta_resp[wiki_id]
         tta_items = topics_to_authority.items()
 
+        print "Getting Wiki Author Topic Authority"
         taresp = WikiAuthorTopicAuthorityService().get(wiki_id)
         if taresp.get('status', 500) != 200:
             return taresp
         topic_authority_data = taresp[wiki_id]
 
-        topics_and_authors = []
-        for author in topic_authority_data['weighted']:
-            for topic in topic_authority_data['weighted'][author]:
-                obj = dict(topic=topic,
-                           author=author,
-                           topic_authority=topic_authority_data['weighted'][author][topic])
-                topics_and_authors.append(obj)
+        print "Combining"
+        resp = defaultdict(dict)
+        r = pool().map_async(topic_authority_tuple_to_obj, topic_authority_data['weighted'].items())
+        for tuple_list in r.get():
+            for topic, obj in tuple_list:
+                resp[topic]['authors'] = resp[topic].get('authors', []) + [obj]
 
-        resp = [(topic,
-                 dict(authority=authority,
-                      authors=sorted(filter(lambda x: x['topic'] == topic, topics_and_authors),
-                                     key=lambda y: y['topic_authority'],
-                                     reverse=True)[:20])
-                 )
-                for topic, authority in tta_items]
-        return {'status': 200, wiki_id: resp}
+        print "Sorting"
+        for topic, authority in tta_items:
+            resp[topic]['authority'] = authority
+            resp[topic]['authors'] = sorted(resp[topic]['authors'], lambda x: x['topic_authority'], reverse=True)[:20]
+
+        return {'status': 200, wiki_id: resp.items()}
