@@ -177,6 +177,8 @@ class WikiTopicsToAuthorityService(RestfulResource):
             for topic, obj in tuple_list:
                 resp[topic]['authors'] = resp[topic].get('authors', []) + [obj]
 
+        print resp[topic]
+
         print "Sorting"
         for topic, authority in tta_items:
             resp[topic]['authority'] = authority
