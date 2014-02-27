@@ -52,7 +52,7 @@ class WikiAuthorsToIdsService(RestfulResource):
             return resp
 
         # need to find a way to manage number of processes across library
-        p = Pool(processes=32)
+        p = pool()
         r = p.map_async(watp_mapper, resp[wiki_id].keys())
         r.wait()
 
