@@ -13,7 +13,7 @@ DEFAULT_POOL = None
 
 
 def set_global_num_processes(num_processes):
-    global NUM_PROCESSES
+    global NUM_PROCESSES, DEFAULT_POOL
     NUM_PROCESSES = num_processes
     DEFAULT_POOL = Pool(processes=num_processes)
 
@@ -21,5 +21,7 @@ def set_global_num_processes(num_processes):
 def pool(num_processes=None):
     global DEFAULT_POOL, NUM_PROCESSES
     if num_processes is None or num_processes == NUM_PROCESSES:
+        if not DEFAULT_POOL:
+            DEFAULT_POOL = Pool(processes=num_processes)
         return DEFAULT_POOL
     return Pool(processes=num_processes)
