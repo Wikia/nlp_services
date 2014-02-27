@@ -162,14 +162,19 @@ class WikiTopicsToAuthorityService(RestfulResource):
             return taresp
         topic_authority_data = taresp[wiki_id]
 
-        topics_and_authors = [dict(topic=topic, author=author, topic_authority=authority)
-                              for author, topics_to_authority in topic_authority_data['weighted'].items()
-                              for topic, authority in tta_items]
+        topics_and_authors = []
+        for author in topic_authority_data['weighted']:
+            for topic in topic_authority_data['weighted'][author]:
+                obj = dict(topic=topic,
+                           author=author,
+                           topic_authority=topic_authority_data['weighted'][author][topic])
+                topics_and_authors.append(obj)
+
         resp = [(topic,
                  dict(authority=authority,
-                      authors=sorted(filter(lambda x: x['topic'] == topic, topics_and_authors),
+                      authors=sorted(topics_and_authors,
                                      key=lambda y: y['topic_authority'],
-                                     reverse=True)[:10])
+                                     reverse=True)[:20])
                  )
                 for topic, authority in tta_items]
         return {'status': 200, wiki_id: resp}
