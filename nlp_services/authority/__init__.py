@@ -172,7 +172,7 @@ class WikiTopicsToAuthorityService(RestfulResource):
 
         resp = [(topic,
                  dict(authority=authority,
-                      authors=sorted(topics_and_authors,
+                      authors=sorted(filter(lambda x: x['topic'] == topic, topics_and_authors),
                                      key=lambda y: y['topic_authority'],
                                      reverse=True)[:20])
                  )
