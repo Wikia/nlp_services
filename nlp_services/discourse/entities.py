@@ -336,6 +336,10 @@ class CombinedDocumentEntityCountsService(BaseDocumentCountsService):
 class BaseWikiPageToEntitiesService(RestfulResource):
     _entities_service = None
 
+    @staticmethod
+    def entity_service_get(cls, pageid):
+        return None
+
     @cached_service_request
     def get(self, wiki_id):
         """ Given a wiki doc id, iterates over all documents available.
@@ -358,7 +362,7 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         page_doc_ids = page_doc_response.get(wiki_id, [])
 
         print "Getting entities for docs"
-        print pool().map_async(entity_service.get, page_doc_ids).get()
+        print pool().map_async(self.entity_service_get, page_doc_ids).get()
 
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
@@ -369,7 +373,9 @@ class BaseWikiPageToEntitiesService(RestfulResource):
 
 
 class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
-    _entities_service = EntitiesService
+    @staticmethod
+    def entity_service_get(cls, pageid):
+        return EntitiesService.get_value(pageid)
 
 
 class WpPageToEntitiesService(BaseWikiPageToEntitiesService):
