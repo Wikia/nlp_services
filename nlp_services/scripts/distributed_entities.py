@@ -11,7 +11,7 @@ def get_args():
     ap.add_argument("--num-processes", dest="num_processes", default=8, type=int)
     ap.add_argument("--percentage-pages", dest="percentage_pages", default=10, type=float)
     ap.add_argument("--slice", dest="slice", default=0, type=int)
-    ap.add_argument("--no-caching", dest="no_caching", default=False, action="set_true")
+    ap.add_argument("--no-caching", dest="no_caching", default=False, action="store_true")
     return ap.parse_args()
 
 
