@@ -11,9 +11,6 @@ from multiprocessing import Pool, cpu_count
 NUM_PROCESSES = 4
 DEFAULT_POOL = None
 
-def get_max():
-
-
 
 def set_global_num_processes(num_processes):
     global NUM_PROCESSES, DEFAULT_POOL
