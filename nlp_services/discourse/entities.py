@@ -359,14 +359,7 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         page_doc_ids = page_doc_response.get(wiki_id, [])
 
         print "Getting entities for docs"
-        self.map_pageids(page_doc_ids)
-
-        for page_doc_id in page_doc_ids:
-            response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
-            counter += 1
-            #print "%d / %d" % (counter, total)
-
-        return response
+        return {wiki_id: zip(page_doc_ids, self.map_pageids(page_doc_ids)), 'status': 200}
 
 
 def es_get(pageid):
@@ -375,7 +368,7 @@ def es_get(pageid):
 
 class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
-        print pool().map_async(es_get, pageids).get()
+        return pool().map_async(es_get, pageids).get()
 
 
 def wpes_get(pageid):
