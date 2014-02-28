@@ -24,7 +24,7 @@ def main():
     slice_start = range(0, len(all_pages), int(slice_size))[args.slice]
     my_pages = all_pages[slice_start:slice_start+slice_size]
     print "Working on", slice_size, "pages"
-    pool(num_processes=args.num_processes).map_async(es_get, my_pages)
+    print pool(num_processes=args.num_processes).map_async(es_get, my_pages).get()
 
 
 if __name__ == "__main__":
