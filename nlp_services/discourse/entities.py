@@ -359,7 +359,7 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         page_doc_ids = page_doc_response.get(wiki_id, [])
 
         print "Getting entities for docs"
-        return {wiki_id: zip(page_doc_ids, self.map_pageids(page_doc_ids)), 'status': 200}
+        return {wiki_id: dict(zip(page_doc_ids, self.map_pageids(page_doc_ids))), 'status': 200}
 
 
 def es_get(pageid):
