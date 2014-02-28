@@ -1,6 +1,7 @@
 from ..pooling import pool
 from ..discourse.entities import EntitiesService
 from ..document_access import ListDocIdsService
+from ..caching import use_caching
 import argparse
 
 
@@ -10,6 +11,7 @@ def get_args():
     ap.add_argument("--num-processes", dest="num_processes", default=8, type=int)
     ap.add_argument("--percentage-pages", dest="percentage_pages", default=10, type=float)
     ap.add_argument("--slice", dest="slice", default=0, type=int)
+    ap.add_argument("--no-caching", dest="no_caching", default=False, action="set_true")
     return ap.parse_args()
 
 
@@ -19,6 +21,8 @@ def es_get(pageid):
 
 def main():
     args = get_args()
+    if not args.no_caching:
+        use_caching()
     all_pages = ListDocIdsService().get_value(args.wiki_id)
     slice_size = int(len(all_pages)/args.percentage_pages)
     slice_start = range(0, len(all_pages), int(slice_size))[args.slice]
