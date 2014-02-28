@@ -24,7 +24,7 @@ def main():
     if not args.no_caching:
         use_caching()
     all_pages = ListDocIdsService().get_value(args.wiki_id)
-    slice_size = int(len(all_pages)/args.percentage_pages)
+    slice_size = int(len(all_pages) * (args.percentage_pages * .01))
     slice_start = range(0, len(all_pages), int(slice_size))[args.slice]
     my_pages = all_pages[slice_start:slice_start+slice_size]
     print "Working on", slice_size, "pages"
