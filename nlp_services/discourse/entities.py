@@ -369,7 +369,7 @@ def es_get(pageid):
 class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
         print "I am here"
-        return pool().map_async(es_get, pageids).get()
+        return pool(with_max=True).map_async(es_get, pageids).get()
 
 
 def wpes_get(pageid):
@@ -378,7 +378,7 @@ def wpes_get(pageid):
 
 class WpPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
-        print pool().map_async(wpes_get, pageids).get()
+        print pool(with_max=True).map_async(wpes_get, pageids).get()
 
 
 def ces_get(pageid):
@@ -387,4 +387,4 @@ def ces_get(pageid):
 
 class CombinedPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
-        print pool().map_async(ces_get, pageids).get()
+        print pool(with_max=True).map_async(ces_get, pageids).get()
