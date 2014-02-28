@@ -368,6 +368,7 @@ def es_get(pageid):
 
 class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
+        print "I am here"
         return pool().map_async(es_get, pageids).get()
 
 
