@@ -352,7 +352,6 @@ class BaseWikiPageToEntitiesService(RestfulResource):
             return page_doc_response
 
         response = {'status': 200, wiki_id: {}}
-        entity_service = self._entities_service()
 
         counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])
