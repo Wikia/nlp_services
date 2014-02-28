@@ -134,7 +134,8 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
         authors_to_entities = {}
         authors_to_entities_weighted = {}
         # todo async
-        for page, entity_data in pages_to_entities.items():
+        print pages_to_entities
+        for page, entity_data in pages_to_entities:
             entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
             for author, author_contribs in filter(lambda x: page in x[1], authors_to_pages.items()):
                 if author not in authors_to_entities:
