@@ -357,7 +357,8 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])
 
-        print pool().map(entity_service.get, page_doc_ids)
+        print "Getting entities for docs"
+        print pool().map_async(entity_service.get, page_doc_ids).get()
 
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
