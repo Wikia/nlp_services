@@ -8,6 +8,7 @@ It costs money to re-cache this shit, so we're not doing that right now.
 
 from .. import document_access
 from .. import RestfulResource
+from ..pooling import pool
 from ..caching import cached_service_request
 from ..syntax import AllNounPhrasesService
 from ..title_confirmation import confirm, canonical, preprocess
@@ -355,7 +356,9 @@ class BaseWikiPageToEntitiesService(RestfulResource):
 
         counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])
-        total = len(page_doc_ids)
+
+        print pool().map(entity_service.get, page_doc_ids)
+
         for page_doc_id in page_doc_ids:
             response[wiki_id][page_doc_id] = entity_service.get_value(page_doc_id, [])
             counter += 1
