@@ -27,3 +27,5 @@ def main():
     pool(num_processes=args.num_processes).map_async(es_get, my_pages)
 
 
+if __name__ == "__main__":
+    main()
