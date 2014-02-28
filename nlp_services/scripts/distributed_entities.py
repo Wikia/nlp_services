@@ -7,9 +7,9 @@ import argparse
 def get_args():
     ap = argparse.ArgumentParser()
     ap.add_argument("--wiki-id", dest="wiki_id")
-    ap.add_argument("--num-processes", dest="num_processes", default=8)
-    ap.add_argument("--percentage-pages", dest="percentage_pages", default=10)
-    ap.add_argument("--slice", dest="slice", default=0)
+    ap.add_argument("--num-processes", dest="num_processes", default=8, type=int)
+    ap.add_argument("--percentage-pages", dest="percentage_pages", default=10, type=float)
+    ap.add_argument("--slice", dest="slice", default=0, type=int)
     return ap.parse_args()
 
 
