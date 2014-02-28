@@ -108,21 +108,28 @@ class WikiTopicAuthorityService(RestfulResource):
 
         return {'status': 200, wiki_id: topics_to_authority}
 
+def author_contrib_for_page(tup):
+    page, entity_data, germane_pages = tup
+
+
 
 class WikiAuthorTopicAuthorityService(RestfulResource):
 
     @cached_service_request
     def get(self, wiki_id):
+        print "Page To Entities"
         wpe_resp = WikiPageToEntitiesService().get(wiki_id)
         if wpe_resp.get('status', 500) == 500:
             return wpe_resp
         pages_to_entities = wpe_resp[wiki_id]
 
+        print "Authors To Pages"
         watp_resp = WikiAuthorsToPagesService().get(wiki_id)
         if watp_resp.get('status', 500) == 500:
             return watp_resp
         authors_to_pages = watp_resp[wiki_id]
 
+        print "Wiki Authority Service"
         was_resp = WikiAuthorityService().get(wiki_id)
         if was_resp.get('status', 500) == 500:
             return was_resp
