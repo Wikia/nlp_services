@@ -108,10 +108,6 @@ class WikiTopicAuthorityService(RestfulResource):
 
         return {'status': 200, wiki_id: topics_to_authority}
 
-def author_contrib_for_page(tup):
-    page, entity_data, germane_pages = tup
-
-
 
 class WikiAuthorTopicAuthorityService(RestfulResource):
 

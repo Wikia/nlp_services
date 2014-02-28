@@ -13,6 +13,7 @@ from ..caching import cached_service_request
 from ..syntax import AllNounPhrasesService
 from ..title_confirmation import confirm, canonical, preprocess
 
+
 class CoreferenceCountsService(RestfulResource):
 
     """
@@ -368,7 +369,7 @@ def es_get(pageid):
 class WikiPageToEntitiesService(BaseWikiPageToEntitiesService):
     def map_pageids(self, pageids):
         print "I am here"
-        return pool(with_max=True).map_async(es_get, pageids).get()
+        return pool(num_processes=32).map_async(es_get, pageids).get()
 
 
 def wpes_get(pageid):
