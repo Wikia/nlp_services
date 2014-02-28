@@ -21,7 +21,7 @@ def set_global_num_processes(num_processes):
 def pool(num_processes=None, with_max=False):
     global DEFAULT_POOL, NUM_PROCESSES
     if with_max:
-        NUM_PROCESSES = cpu_count()
+        num_processes = cpu_count()
     if num_processes is None or num_processes == NUM_PROCESSES:
         if not DEFAULT_POOL:
             DEFAULT_POOL = Pool(processes=num_processes)
