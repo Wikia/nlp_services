@@ -63,6 +63,7 @@ class BaseEntitiesService(RestfulResource):
         :rtype: dict
         """
 
+        print doc_id
         if not self._use_wikia and not self._use_wikipedia:
             raise Exception("Entity sources aren't configured")
 
@@ -88,6 +89,7 @@ class BaseEntitiesService(RestfulResource):
             resp['redirects'] = dict(filter(lambda x: x[0] != x[1],
                                             [(title, canonical(title, wiki_id)) for title in confirmed]))
 
+        print doc_id, "done"
         return {'status': 200, doc_id: resp}
 
 
@@ -353,9 +355,6 @@ class BaseWikiPageToEntitiesService(RestfulResource):
         if page_doc_response['status'] != 200:
             return page_doc_response
 
-        response = {'status': 200, wiki_id: {}}
-
-        counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])
 
         print "Getting entities for docs"
