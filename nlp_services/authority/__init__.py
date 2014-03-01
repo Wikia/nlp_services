@@ -109,6 +109,11 @@ class WikiTopicAuthorityService(RestfulResource):
         return {'status': 200, wiki_id: topics_to_authority}
 
 
+def page_entity_to_author_contribs(tup):
+    page, entity_data, authority_data, author_data = tup
+
+
+
 class WikiAuthorTopicAuthorityService(RestfulResource):
 
     @cached_service_request
@@ -131,12 +136,18 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
             return was_resp
         pages_to_authority = was_resp[wiki_id]
 
+        print "Mapping author contribs to pages and entities"
         authors_to_entities = {}
         authors_to_entities_weighted = {}
-        # todo async
+
+        pages_to_authors = defaultdict(list)
+        for author, contribs in authors_to_pages.items():
+            for page, contrib in contribs.items():
+                pages_to_authors[page].append((author, contrib))
+
         for page, entity_data in pages_to_entities.items():
             entity_list = list(set(entity_data.get('redirects', {}).values() + entity_data.get('titles')))
-            for author, author_contribs in filter(lambda x: page in x[1], authors_to_pages.items()):
+            for author, contrib in pages_to_authors[page]:
                 if author not in authors_to_entities:
                     authors_to_entities[author] = dict()
                 if author not in authors_to_entities_weighted:
@@ -145,7 +156,7 @@ class WikiAuthorTopicAuthorityService(RestfulResource):
                     authors_to_entities[author][entity] = (authors_to_entities[author].get(entity, 0)
                                                            + pages_to_authority[page])
                     authors_to_entities_weighted[author][entity] = (authors_to_entities[author].get(entity, 0)
-                                                                    + pages_to_authority[page] * author_contribs[page])
+                                                                    + pages_to_authority[page] * contrib)
 
         return {'status': 200, wiki_id: {'unweighted': authors_to_entities, 'weighted': authors_to_entities_weighted}}
 
