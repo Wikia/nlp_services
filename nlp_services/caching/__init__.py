@@ -128,7 +128,6 @@ def cached_service_request(get_method):
                 if response.get('status', 500) == 200 \
                         and not per_service_caching().get(service, {}).get('read_only', read_only()):
                     key = b.new_key(key_name=path)
-                    print "got ", service, doc_id
                     key.set_contents_from_string(json.dumps(response, ensure_ascii=False))
             elif result is None and per_service_caching().get(service, {}).get('dont_compute', dont_compute()):
                 return {'status': 404, doc_id: {}}
