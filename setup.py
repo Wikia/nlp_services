@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="nlp_services",
-    version= "0.0.1",
+    version="0.0.2",
     author="Robert Elwell",
     author_email="robert.elwell@gmail.com",
     description="A collection of services for interacting with NLP data extracted from Stanford CoreNLP",
