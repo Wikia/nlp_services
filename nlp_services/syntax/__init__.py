@@ -9,17 +9,18 @@ from .. import document_access
 from ..title_confirmation import preprocess
 from ..caching import cached_service_request
 
-def get_pos_phrases(doc_id, phrases):
+
+def get_pos_leaves(document, phrases):
     """
-    Given a doc ID, return a list of
-    :param doc_id: The ID of the document
-    :type doc_id: str
+    Given a document, return a list of strings matching the desired phrases.
+
+    :param document: A document
+    :type document: corenlp_xml.document.Document
     :param phrases: a list of POS tags desired
     :type phrases: list
     :return: a list of strings corresponding with the spans matching the desired phrases or words
     """
     leaves = []
-    document = document_access.get_document_by_id(doc_id)
     if document is not None:
         leaves = [u" ".join(subtree.leaves())
                   for s in document.sentences
@@ -27,6 +28,20 @@ def get_pos_phrases(doc_id, phrases):
                   if subtree.node in phrases]
 
     return leaves
+
+
+def get_pos_phrases(doc_id, phrases):
+    """
+    Given a doc ID, return a list of strings matching the desired phrases.
+
+    :param doc_id: The ID of the document
+    :type doc_id: str
+    :param phrases: a list of POS tags desired
+    :type phrases: list
+    :return: a list of strings corresponding with the spans matching the desired phrases or words
+    """
+    document = document_access.get_document_by_id(doc_id)
+    return get_pos_leaves(document, phrases)
 
 
 class AllNounPhrasesService(RestfulResource):
