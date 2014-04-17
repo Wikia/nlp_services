@@ -73,6 +73,8 @@ class WikiAuthorsToPagesService(RestfulResource):
 
         author_to_pages = {}
         for doc_id, authors in r.get():
+            if not authors:
+                continue
             for author in authors:
                 author_to_pages[author['user']] = (author_to_pages.get(author['user'], [])
                                                    + [(doc_id, author['contribs'])])
