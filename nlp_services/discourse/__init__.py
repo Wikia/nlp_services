@@ -12,8 +12,8 @@ class AllEntitiesSentimentAndCountsService(RestfulResource):
     @cached_service_request
     def get(self, wiki_id):
         counts = dict(
-            entities.WpWikiEntitiesService().get_value(wiki_id).items() +
-            entities.WikiEntitiesService().get_value(wiki_id).items()
+            entities.WpWikiEntitiesService().get_value(wiki_id, {}).items() +
+            entities.WikiEntitiesService().get_value(wiki_id, {}).items()
         )
         sentiments = dict(
             sentiment.WikiEntitySentimentService().get_value(wiki_id, {}).items() +
