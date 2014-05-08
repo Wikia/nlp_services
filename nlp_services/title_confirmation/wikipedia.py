@@ -63,11 +63,7 @@ def bootstrap_sqlite_connection():
                            os.path.expanduser("~"),
                            os.getcwd()])
 
-    print 'Candidate paths: %s' % str(candidate_paths)
-
     db_paths = filter(os.path.exists, candidate_paths)
-
-    print 'DB Paths: %s' % str(db_paths)
 
     if len(db_paths) == 0:
         raise LookupError("The wp_titles.db file can't be found. "
