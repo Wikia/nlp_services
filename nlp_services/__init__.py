@@ -17,7 +17,7 @@ class RestfulResource(restful.Resource):
         :return: whatever the return value of the method call is
         """
         print doc_id
-        return self.get(doc_id, {}).get(doc_id, backoff)
+        return self.get(doc_id).get(doc_id, backoff)
 
 import caching
 import title_confirmation
