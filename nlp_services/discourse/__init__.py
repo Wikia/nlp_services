@@ -8,17 +8,22 @@ import sentiment
 
 class AllEntitiesSentimentAndCountsService(RestfulResource):
 
-    """ Key is entity name, and then dict of count and sentiment so we can sort and what not """
+    """ Key is entity name, and then dict of count and sentiment so we can sort
+    and what not """
     @cached_service_request
     def get(self, wiki_id):
         counts = dict(
-            entities.WpWikiEntitiesService().get_value(wiki_id, {}).items() +
-            entities.WikiEntitiesService().get_value(wiki_id, {}).items()
-        )
+            entities.WpWikiEntitiesService().get_value(
+                wiki_id, backoff={}).items() +
+            entities.WikiEntitiesService().get_value(
+                wiki_id, backoff={}).items()
+            )
         sentiments = dict(
-            sentiment.WikiEntitySentimentService().get_value(wiki_id, {}).items() +
-            sentiment.WpWikiEntitySentimentService().get_value(wiki_id, {}).items()
-        )
+            sentiment.WikiEntitySentimentService().get_value(
+                wiki_id, backoff={}).items() +
+            sentiment.WpWikiEntitySentimentService().get_value(
+                wiki_id, backoff={}).items()
+            )
 
         resp_dict = {}
         for s in sentiments:
