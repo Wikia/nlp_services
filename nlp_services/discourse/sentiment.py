@@ -178,7 +178,7 @@ class BaseWikiEntitySentimentService(RestfulResource):
             counter = 0
             total = len(page_doc_response[wiki_id])
             for doc_id in page_doc_response[wiki_id]:
-                sent_response = dss.get_value(doc_id, backoff={})
+                sent_response = dss.get_value(doc_id, {})
                 avg_phrase_sentiment = sent_response.get('averagePhraseSentiment', {})
                 print "%d / %d (%d keys)" % (counter, total, len(avg_phrase_sentiment.keys()))
                 counter += 1

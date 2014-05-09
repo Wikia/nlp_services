@@ -14,15 +14,15 @@ class AllEntitiesSentimentAndCountsService(RestfulResource):
     def get(self, wiki_id):
         counts = dict(
             entities.WpWikiEntitiesService().get_value(
-                wiki_id, backoff={}).items() +
+                wiki_id, {}).items() +
             entities.WikiEntitiesService().get_value(
-                wiki_id, backoff={}).items()
+                wiki_id, {}).items()
             )
         sentiments = dict(
             sentiment.WikiEntitySentimentService().get_value(
-                wiki_id, backoff={}).items() +
+                wiki_id, {}).items() +
             sentiment.WpWikiEntitySentimentService().get_value(
-                wiki_id, backoff={}).items()
+                wiki_id, {}).items()
             )
 
         resp_dict = {}
