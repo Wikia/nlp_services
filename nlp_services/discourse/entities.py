@@ -229,8 +229,10 @@ class BaseTopEntitiesService(RestfulResource):
     """
     @cached_service_request
     def get(self, wiki_id):
-        counts_to_entities = self._entities_service().get_value(wiki_id, {})
-        items = sorted([(val, key) for key in counts_to_entities.keys() for val in counts_to_entities[key]],
+        counts_to_entities = self._entities_service().get_value(
+            wiki_id, backoff={})
+        items = sorted([(val, key) for key in counts_to_entities.keys() for val
+                        in counts_to_entities[key]],
                        key=lambda item: int(item[1]),
                        reverse=True)
         return {'status': 200, wiki_id: items[:50]}
