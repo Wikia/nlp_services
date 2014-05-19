@@ -230,7 +230,8 @@ class BaseTopEntitiesService(RestfulResource):
     @cached_service_request
     def get(self, wiki_id):
         counts_to_entities = self._entities_service().get_value(wiki_id, {})
-        items = sorted([(val, key) for key in counts_to_entities.keys() for val in counts_to_entities[key]],
+        items = sorted([(val, key) for key in counts_to_entities.keys() for val
+                        in counts_to_entities[key]],
                        key=lambda item: int(item[1]),
                        reverse=True)
         return {'status': 200, wiki_id: items[:50]}
@@ -305,7 +306,7 @@ class BaseDocumentCountsService(RestfulResource):
             return page_doc_response
 
         entities_to_count = {}
-        entity_service = self._entity_count_service
+        entity_service = self._entity_count_service()
 
         counter = 1
         page_doc_ids = page_doc_response.get(wiki_id, [])

@@ -3,21 +3,27 @@ __author__ = 'relwell'
 from .. import RestfulResource
 from ..caching import cached_service_request
 import entities
+import sentiment
 
 
 class AllEntitiesSentimentAndCountsService(RestfulResource):
 
-    """ Key is entity name, and then dict of count and sentiment so we can sort and what not """
+    """ Key is entity name, and then dict of count and sentiment so we can sort
+    and what not """
     @cached_service_request
     def get(self, wiki_id):
         counts = dict(
-            entities.WpWikiEntitiesService().get_value(wiki_id).items() +
-            entities.WikiEntitiesService().get_value(wiki_id).items()
-        )
+            entities.WpWikiEntitiesService().get_value(
+                wiki_id, {}).items() +
+            entities.WikiEntitiesService().get_value(
+                wiki_id, {}).items()
+            )
         sentiments = dict(
-            entities.WikiEntitySentimentService().get_value(wiki_id, {}).items() +
-            entities.WpWikiEntitySentimentService().get_value(wiki_id, {}).items()
-        )
+            sentiment.WikiEntitySentimentService().get_value(
+                wiki_id, {}).items() +
+            sentiment.WpWikiEntitySentimentService().get_value(
+                wiki_id, {}).items()
+            )
 
         resp_dict = {}
         for s in sentiments:

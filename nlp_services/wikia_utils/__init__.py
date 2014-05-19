@@ -62,11 +62,11 @@ def phrases_for_wiki_field(wiki_id, field):
     """
     path = '/data/wiki_xml/%s/%s.xml' % (wiki_id, field)
     if not os.path.exists(path):
-        return {}
+        return []
 
     text = open(path, 'r').read()
     if len(text) > 0:
         document = Document(text)
         return get_pos_leaves(document, NOUN_TAGS)
 
-    return {}
+    return []

@@ -138,7 +138,7 @@ def get_redirects_for_wiki_id(wiki_id):
             REDIRECTS = json.loads(stringdata)[wiki_id]
         else:
             # should check on this
-            REDIRECTS = []
+            REDIRECTS = {}
     else:
         local_db = get_local_db_from_wiki_id(get_global_db(), wiki_id)
         cursor = local_db.cursor()
