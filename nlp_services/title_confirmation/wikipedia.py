@@ -4,7 +4,7 @@ Interacts with a sqlite database of wikipedia titles for entity confirmation
 from gzip import open as gzopen
 import os
 import sqlite3 as lite
-from . import preprocess
+from nlp_services.title_confirmation import preprocess
 
 
 """

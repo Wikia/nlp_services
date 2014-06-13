@@ -6,9 +6,9 @@ except:
 from gzip import GzipFile
 from StringIO import StringIO
 from boto import connect_s3
-from . import preprocess
-from .. import RestfulResource
-from ..caching import cached_service_request
+from nlp_services.title_confirmation import preprocess
+from nlp_services import RestfulResource
+from nlp_services.caching import cached_service_request
 import phpserialize
 import json
 
