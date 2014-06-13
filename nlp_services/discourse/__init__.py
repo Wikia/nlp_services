@@ -11,6 +11,8 @@ class AllEntitiesSentimentAndCountsService(RestfulResource):
     @cached_service_request
     def get(self, wiki_id):
         """
+        AllEntitiesSentimentAndCountsService.get()
+
         Returns a dictionary of entities to their count and sentiment for the wiki
         Key is entity name, and then dict of count and sentiment so we can sort
         and what not

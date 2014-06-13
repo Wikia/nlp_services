@@ -2,6 +2,7 @@
 Caching library -- basically memoizes stuff for now
 """
 from boto import connect_s3
+from functools import wraps
 import json
 
 """
@@ -156,6 +157,7 @@ def cached_service_request(get_method):
     :return: the return value of the method, either from a flat file cache in S3 or via invocation. This can be None.
     :rtype: mixed
     """
+    @wraps(get_method)
     def invoke(self, *args, **kw):
 
         b = bucket()
