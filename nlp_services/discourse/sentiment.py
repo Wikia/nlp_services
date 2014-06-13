@@ -5,7 +5,8 @@ Classes for handling sentiment
 from multiprocessing import Pool, Manager
 
 import numpy
-import string
+from ..pooling import pool
+from collections import defaultdict
 from nltk.tree import Tree
 from ..caching import cached_service_request
 from ..title_confirmation import preprocess
@@ -15,7 +16,6 @@ from .entities import CoreferenceCountsService, CombinedEntitiesService, WpEntit
 
 
 USE_MULTIPROCESSING = False
-MP_NUM_CORES = 4
 
 
 class DocumentSentimentService(RestfulResource):
@@ -26,17 +26,19 @@ class DocumentSentimentService(RestfulResource):
 
     def __init__(self):
         self.val_to_canonical = dict()
-        self.phrases_to_sentiment = dict()
-
+        self.phrases_to_sentiment = defaultdict(list)
 
     @cached_service_request
     def get(self, doc_id):
         """
         Provides average sentiment across the document, and sentiment scores for entities within each subject.
+
         :param doc_id: the id of the document
         :type doc_id: str
+
         :return: dictionary with response data
         :rtype:dict
+
         """
 
         document = document_access.get_document_by_id(doc_id)
@@ -58,7 +60,7 @@ class DocumentSentimentService(RestfulResource):
 
         doc_paraphrases = CoreferenceCountsService().get_value(doc_id, {}).get('paraphrases', {})
 
-        self.val_to_canonical = dict(map(lambda x: map(preprocess, x),
+        self.val_to_canonical = dict(map(lambda y: map(preprocess, y),
                                          [(key, key) for key in doc_paraphrases]
                                          + [(value, key) for key in doc_paraphrases for value in doc_paraphrases[key]]))
 
@@ -70,21 +72,25 @@ class DocumentSentimentService(RestfulResource):
         for sentence in document.sentences:
             self.traverse_tree_for_sentiment(sentence)
 
-        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(filter(lambda y: y is not None, x[1]))) for x in self.phrases_to_sentiment.items()])
+        response['averagePhraseSentiment'] = dict([(x[0], numpy.mean(filter(lambda y: y is not None, x[1])))
+                                                   for x in self.phrases_to_sentiment.items()])
 
         return {'status': 200, doc_id: response}
 
     def traverse_tree_for_sentiment(self, sentence, subtree=None):
         """
         Cross-references sentiment for a sentence with the mentions therein
+
         :param sentence: a sentence instance
-        :type sentence:class:`corenlp_xml.document.Sentence`
+        :type sentence: corenlp_xml.document.Sentence
+
         :param subtree: an instance of an NLTK tree, unde whose scope we operate
-        :type subtree:class:`nltk.tree.Tree`
+        :type subtree: nltk.tree.Tree
+
         :return: None, stores values in class as side effect
         :rtype: None
+
         """
-        exclude = set(string.punctuation)
         try:
             if subtree is None:
                 subtree = sentence.parse
@@ -92,11 +98,10 @@ class DocumentSentimentService(RestfulResource):
                 return None
             flattened = preprocess(' '.join(subtree.leaves()))
             if flattened in self.val_to_canonical:
-                self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(self.val_to_canonical[flattened], []) \
-                                                       + [sentence.sentiment]
+                self.phrases_to_sentiment[flattened].append(sentence.sentiment)
                 return None  # no need to keep going
             elif subtree.node in ['NP', 'NNS', 'NN', 'NNP', 'NNPS', 'VBG'] and flattened.strip() != '':
-                self.phrases_to_sentiment[flattened] = self.phrases_to_sentiment.get(flattened, []) + [sentence.sentiment]
+                self.phrases_to_sentiment[flattened].append([sentence.sentiment])
 
             map(lambda x: self.traverse_tree_for_sentiment(sentence, x), filter(lambda x: isinstance(x, Tree), subtree))
         except UnicodeEncodeError:
@@ -105,13 +110,22 @@ class DocumentSentimentService(RestfulResource):
 
 
 class BaseDocumentEntitySentimentService(RestfulResource):
+    """Base class for providing sentiment for entities only, and not phrases"""
+
     _entities_service = None
 
-    ''' Filters out sentiment in a document to only care about entities '''
     @cached_service_request
     def get(self, doc_id):
         """
-        Applies sentiment to a set of entities
+        Retrieves sentiment for all entities by filtering the response from DocumentSentimentService
+        Entity type is determined by the implementing class
+
+        :param doc_id: the document ID
+        :type doc_id: str
+
+        :return: the response dictionary
+        :rtype: dict
+
         """
         sentiment_response = DocumentSentimentService().get(doc_id)
 
@@ -127,10 +141,17 @@ class BaseDocumentEntitySentimentService(RestfulResource):
 
 
 class DocumentEntitySentimentService(BaseDocumentEntitySentimentService):
+    """
+    Provides sentiment for wikia entities only
+    """
+
     _entities_service = CombinedEntitiesService
 
 
 class WpDocumentEntitySentimentService(BaseDocumentEntitySentimentService):
+    """
+    Provides sentiment for wikipedia entities only
+    """
     _entities_service = WpEntitiesService
 
 
@@ -142,26 +163,34 @@ class BaseWikiEntitySentimentService(RestfulResource):
     def update_dict_with_document_entity_sentiment(cls, tup):
         """
         Updates a managed dict with entity sentiment values in multiprocessing paradigm
+
         :param tup: a tuple containing the managed dict, the doc id, and the class to use
         :type tup: tuple
+
+        :return: nothing, this is a side effect method
+        :rtype: None
+
         """
         managed, doc_id = tup
         service_response = cls._document_entity_sentiment_service().get_value(doc_id, {})
         for key in service_response:
             managed[key] = managed.get(key, []) + [service_response[key]]
 
-
     @cached_service_request
     def get(self, wiki_id):
         """
         Averages sentiment for entities across all documents
+
         :param wiki_id: the id of the wiki
         :type wiki_id: str|int
+
         :return: response
         :rtype: dict
-        """
-        global USE_MULTIPROCESSING, MP_NUM_CORES
 
+        """
+        global USE_MULTIPROCESSING
+
+        wiki_id = str(wiki_id)
         page_doc_response = document_access.ListDocIdsService().get(wiki_id)
         if page_doc_response['status'] != 200:
             return page_doc_response
@@ -169,8 +198,8 @@ class BaseWikiEntitySentimentService(RestfulResource):
         if USE_MULTIPROCESSING:
             d = Manager().dict()
 
-            Pool(processes=MP_NUM_CORES).map(self.__class__.update_dict_with_document_entity_sentiment(),
-                                             [(d, doc_id) for doc_id in page_doc_response[wiki_id]])
+            pool(with_max=True).map(self.__class__.update_dict_with_document_entity_sentiment,
+                                    [(d, doc_id) for doc_id in page_doc_response[wiki_id]])
             entity_sentiment = dict(d.items())
         else:
             entity_sentiment = {}
@@ -190,8 +219,14 @@ class BaseWikiEntitySentimentService(RestfulResource):
 
 
 class WikiEntitySentimentService(BaseWikiEntitySentimentService):
+    """
+    Uses Wikia entities
+    """
     _document_entity_sentiment_service = DocumentEntitySentimentService
 
 
 class WpWikiEntitySentimentService(BaseWikiEntitySentimentService):
+    """
+    Uses Wikipedia entities
+    """
     _document_entity_sentiment_service = WpDocumentEntitySentimentService

@@ -8,10 +8,23 @@ import sentiment
 
 class AllEntitiesSentimentAndCountsService(RestfulResource):
 
-    """ Key is entity name, and then dict of count and sentiment so we can sort
-    and what not """
     @cached_service_request
     def get(self, wiki_id):
+        """
+        AllEntitiesSentimentAndCountsService.get()
+
+        Returns a dictionary of entities to their count and sentiment for the wiki
+        Key is entity name, and then dict of count and sentiment so we can sort
+        and what not
+
+        :param wiki_id: the ID of the wiki
+        :type wiki_id: str|int
+
+        :return: a dictionary of entities to count and sentiment for the wiki
+        :rtype: dict
+
+        """
+        wiki_id = str(wiki_id)
         counts = dict(
             entities.WpWikiEntitiesService().get_value(
                 wiki_id, {}).items() +

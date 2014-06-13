@@ -17,27 +17,35 @@ SQLITE_CONNECTION = None
 def check_wp(title):
     """
     Checks if a "title" is a title in wikipedia first using memoization cache, then check_wp_s3
-    :param title: string
+
+    :param title: the title string
+    :type title: str
+
     :return: whether the string is a title in wikipedia
     :rtype: bool
+
     """
     global WP_SEEN
     ppt = preprocess(title)
-    bool = ppt in WP_SEEN or check_wp_sqlite(ppt)
-    return bool
+    return ppt in WP_SEEN or check_wp_sqlite(ppt)
 
 
 def check_wp_sqlite(title):
     """
     Queries the title against the sqlite db and then memoizes it into the WP_SEEN variable for performance
+
+    :param title: the title string
+    :type title: str
+
     :return: whether the title is legit
+    :rtype: bool
+
     """
     global WP_SEEN
-    conn = get_sqlite_connection()
-    cursor = conn.cursor()
+    cursor = get_sqlite_connection().cursor()
     cursor.execute("SELECT * FROM `titles` where `title` = \"%s\"" % (title.replace('"', '""')))
     if cursor.fetchone() is not None:
-        WP_SEEN += [title]
+        WP_SEEN.append(title)
         return True
     return False
 
@@ -45,7 +53,10 @@ def check_wp_sqlite(title):
 def get_sqlite_connection():
     """
     Memoizes sqlite connection
+
     :return: sqlite connection
+    :rtype: sqlite3.Connection
+
     """
     global SQLITE_CONNECTION
     if SQLITE_CONNECTION is None:
@@ -56,7 +67,10 @@ def get_sqlite_connection():
 def bootstrap_sqlite_connection():
     """
     Gets the sqlite connection, validating that it is well-formed first
+
     :return: sqlite connection
+    :rtype: sqlite3.Connection
+
     """
     candidate_paths = map(lambda x: x+'/wp_titles.db',
                           [os.path.dirname(os.path.realpath(__file__)),
@@ -81,7 +95,10 @@ def bootstrap_sqlite_connection():
 def create_wp_table(conn):
     """
     Creates the wp table from a sqlite connection. This is basically here for posterity, shouldn't be used.
+
     :param conn: a sqlite connection
+    :type conn: sqlite3.Connection
+
     """
     print 'creating'
     cur = conn.cursor()

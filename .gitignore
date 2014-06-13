@@ -57,3 +57,5 @@ nlp_services/title_confirmation/wp_titles.db
 
 # Swap files
 *.swp
+
+docs/build/*
