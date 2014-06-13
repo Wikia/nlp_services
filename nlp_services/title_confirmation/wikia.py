@@ -1,18 +1,16 @@
 try:
     from wikicities.DB import LoadBalancer
 except:
-    pass #screw it
+    pass  #screw it
+
 from gzip import GzipFile
 from StringIO import StringIO
-import json
-
 from boto import connect_s3
-import phpserialize
 from . import preprocess
 from .. import RestfulResource
 from ..caching import cached_service_request
-
-
+import phpserialize
+import json
 
 # memoization variables
 TITLES = []
@@ -29,35 +27,16 @@ def get_config():
     return yml
 
 
-def get_local_db_from_options(options, global_db):
-    """ Allows us to load in the local DB name from one or more options
-    :param options: the 0th result of OptionParser.parse_args()
-    """
-    if options.id:
-        where = "city_id = %s" % options.id
-    elif options.wikihost:
-        where = 'city_url = "%s"' % options.wikihost
-    elif options.db:
-        where = 'city_dbname = "%s"' % options.db
-    else:
-        raise ValueError("Need a db, id, or host.")
-
-    cursor = global_db.cursor()
-    sql = "SELECT city_id, city_dbname FROM city_list WHERE %s" % where
-    cursor.execute(sql)
-    result = cursor.fetchone()
-    if not result:
-        raise ValueError("No wiki found")
-
-    return result
-
-
 def get_global_db(master=False):
     """
     Accesses the wikia global db
+
     :param master: whether we should use the writeable master db
     :type master: bool
+
     :return: database connection
+    :rtype: MySQLdb.connections.Connection
+
     """
     lb = LoadBalancer(get_config())
     return lb.get_db_by_name('wikicities', master=master)
@@ -66,11 +45,15 @@ def get_global_db(master=False):
 def get_local_db_from_wiki_id(wiki_id, master=False):
     """
     Accesses a given wiki's database
+
     :param wiki_id: the id of the wiki in the wikicities db
-    :type wiki_id: int
+    :type wiki_id: int|str
     :param master: whether to use the writeable master
     :type master: bool
-    :return: datbase connection
+
+    :return: database connection
+    :rtype: MySQLdb.connections.Connection
+
     """
     global CURRENT_WIKI_ID
     cursor = get_global_db().cursor()
@@ -86,7 +69,13 @@ def get_local_db_from_wiki_id(wiki_id, master=False):
 
 def get_namespaces(global_db, wiki_id):
     """ Accesses the default content namespaces for the wiki
+
     :param global_db: the global database object
+    :type global_db: MySQLdb.connections.Connection
+
+    :return: list of content namespacs
+    :rtype: list
+
     """
     cursor = global_db.cursor()
     cursor.execute("SELECT cv_value FROM city_variables WHERE cv_city_id = %s AND cv_variable_id = 359" % str(wiki_id))
@@ -95,6 +84,17 @@ def get_namespaces(global_db, wiki_id):
 
 
 def get_titles_for_wiki_id(wiki_id):
+    """
+    Accesses all titles for a given wiki_id
+    TODO: a sqlite db in s3 for every title database??
+
+    :param wiki_id: the id of the wiki
+    :type wiki_id: int|str
+
+    :return: list of all title strings
+    :rtype: list
+
+    """
     global TITLES, CURRENT_WIKI_ID, USE_S3
     if wiki_id == CURRENT_WIKI_ID and len(TITLES) > 0:
         return TITLES
@@ -123,6 +123,17 @@ def get_titles_for_wiki_id(wiki_id):
 
 
 def get_redirects_for_wiki_id(wiki_id):
+    """
+    Returns all redirects for the provided wiki ID
+    TODO: per-wiki sqlite db in s3?
+
+    :param wiki_id: the wiki_id in question
+    :type wiki_id: int|str
+
+    :return: list of redirect strings
+    :rtype: list
+
+    """
     global REDIRECTS, CURRENT_WIKI_ID, USE_S3
     if wiki_id == CURRENT_WIKI_ID and len(REDIRECTS) > 0:
         return REDIRECTS
@@ -152,14 +163,19 @@ def get_redirects_for_wiki_id(wiki_id):
 class AllTitlesService(RestfulResource):
 
     """ Responsible for accessing all titles from database using title_confirmation module """
+
     @cached_service_request
     def get(self, wiki_id):
         """ Extracts titles for a wiki from database
         The module it uses stores this value memory when caching is off.
+
         :param wiki_id: the id of the wiki
+        :type wiki_id: str|int
+
         :return: response
+        :rtype: dict
         """
-        return {'status': 200, wiki_id: list(get_titles_for_wiki_id(wiki_id))}
+        return {'status': 200, wiki_id: list(get_titles_for_wiki_id(str(wiki_id)))}
 
 
 class RedirectsService(RestfulResource):
@@ -169,7 +185,11 @@ class RedirectsService(RestfulResource):
     def get(self, wiki_id):
         """ Gives us a dictionary of redirect to canonical title
         In-memory caching when we don't have db caching.
+
         :param wiki_id: the id of the wiki
+        :type wiki_id: int|str
+
         :return: response
+        :rtype: dict
         """
-        return {'status': 200, wiki_id: get_redirects_for_wiki_id(wiki_id)}
+        return {'status': 200, wiki_id: get_redirects_for_wiki_id(str(wiki_id))}
