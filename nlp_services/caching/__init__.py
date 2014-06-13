@@ -15,10 +15,16 @@ DONT_COMPUTE = False
 PER_SERVICE_CACHING = {}
 
 
-def bucket(new_bucket = None):
-    """ Access & mutate so we don't have globals in every function
-    :param new_bucket:s3 bucket
-    :return
+def bucket(new_bucket=None):
+    """
+    Getter/setter function for global cache bucket
+
+    :param new_bucket: s3 bucket
+    :type new_bucket: boto.s3.bucket.Bucket
+
+    :return: an s3 bucket
+    :rtype: boto.s3.bucket.Bucket
+
     """
     global CACHE_BUCKET
     if new_bucket:
@@ -26,9 +32,16 @@ def bucket(new_bucket = None):
     return CACHE_BUCKET
 
 
-def read_only(mutate = None):
-    """ Access & mutate so we don't need globals in every function
+def read_only(mutate=None):
+    """
+    Getter/setter for read-only cache config
+
     :param mutate: a boolean value
+    :type mutate: bool
+
+    :return: whether the cache is read-only in this context
+    :rtype: bool
+
     """
     global READ_ONLY
     if mutate is not None:
@@ -36,9 +49,16 @@ def read_only(mutate = None):
     return READ_ONLY
 
 
-def write_only(mutate = None):
-    """ Access & mutate so we don't need globals in every function
-    :param mutate: a boolean value
+def write_only(mutate=None):
+    """
+    Getter/Setter for write-only cache config
+
+    :param mutate: whether the cache should be write-only
+    :type mutate: bool
+
+    :return: whether the cache is write-only
+    :rtype: bool
+
     """
     global WRITE_ONLY
     if mutate is not None:
@@ -47,8 +67,15 @@ def write_only(mutate = None):
 
 
 def dont_compute(mutate=None):
-    """ With read only, will prevent calling method
-    :param mutate: a boolean val
+    """
+    With read only, will prevent calling method
+
+    :param mutate: a boolean val, whether to skip computation
+    :type mutate: bool
+
+    :return: whether we should compute
+    :rtype: bool
+
     """
     global DONT_COMPUTE
     if mutate is not None:
@@ -57,10 +84,17 @@ def dont_compute(mutate=None):
 
 
 def per_service_caching(services=None):
-    """ Store a dict of per-service cache options.
+    """
+    Store a dict of per-service cache options.
+
     :param services: a dict of the following structure:
                      { service_name : { 'read_only': True, 'write_only': False, 'dont_compute': False } }
                      -- if these values aren't set, the default is the globally set value
+    :type services: dict
+
+    :return: the per-service caching config dict
+    :rtype: dict
+
     """
     global PER_SERVICE_CACHING
     if services is not None:
@@ -69,10 +103,14 @@ def per_service_caching(services=None):
 
 
 def use_caching(is_write_only=False, is_read_only=False, shouldnt_compute=False, per_service_cache={}):
-    """ Invoke this to set CACHE_BUCKET and enable caching on these services 
+    """ Invoke this to set CACHE_BUCKET and enable caching on these services
+
     :param is_write_only: whether we should avoid reading from the cache
+    :type is_write_only: bool
     :param is_read_only: whether we should avoid writing to the cache
+    :type is_read_only: bool
     :param per_service_cache: dict that relates specific how specific services should be cached
+    :type per_service_cache: dict
     """
     bucket(connect_s3().get_bucket('nlp-data'))
     read_only(is_read_only)
@@ -83,8 +121,12 @@ def use_caching(is_write_only=False, is_read_only=False, shouldnt_compute=False,
 
 def purge_for_doc(doc_id):
     """ Remove all service responses for a given doc id
+
     :param doc_id: the document id. if it's a wiki id, you're basically removing all wiki-scoped caching
+    :type doc_id: str
+
     :return: a MultiDeleteResult
+    :rtype: boto.s3.multidelete.MultiDeleteResult
     """
     b = bucket()
     prefix = 'service_responses/%s' % doc_id.replace('_', '/')
@@ -93,17 +135,26 @@ def purge_for_doc(doc_id):
 
 def purge_for_wiki(wiki_id):
     """ Remove cached service responses for a given wiki id
+
     :param wiki_id: the id of the wiki
+    :type wiki_id: int|str
+
     :return: a MultiDeleteResult
+    :rtype: boto.s3.multidelete.MultiDeleteResult
     """
     b = bucket()
-    prefix = 'service_responses/%s' % wiki_id
+    prefix = 'service_responses/%s' % str(wiki_id)
     return b.delete_keys([key for key in b.list(prefix=prefix)])
 
 
 def cached_service_request(get_method):
     """ This is a decorator responsible for optionally memoizing a service response into the cache
+
     :param get_method: the function we're wrapping -- should be a GET endpoint
+    :type get_method: instancemethod
+
+    :return: the return value of the method, either from a flat file cache in S3 or via invocation. This can be None.
+    :rtype: mixed
     """
     def invoke(self, *args, **kw):
 
