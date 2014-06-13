@@ -5,8 +5,6 @@ connote entities
 
 import re
 from nltk.corpus import stopwords
-from wikia import AllTitlesService, RedirectsService
-from wikipedia import check_wp
 
 """ Memoization variables """
 USE_WIKIPEDIA = True
@@ -30,6 +28,9 @@ def preprocess(title):
                re.sub(
                    ' \(\w+\)', '',
                    title.lower().replace('_', ' ')).split(' ')))[:500]
+
+from .wikia import AllTitlesService, RedirectsService
+from .wikipedia import check_wp
 
 
 def confirm(title, wiki_id=None, use_wikipedia=None):

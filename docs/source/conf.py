@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# NLP Serviceis documentation build configuration file, created by
+# NLP Services documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun 13 13:41:39 2014.
 #
 # This file is execfile()d with the current directory set to its
@@ -45,7 +45,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'NLP Serviceis'
+project = u'NLP Services'
 copyright = u'2014, Robert Elwell and Tristan Chong'
 
 # The version info for the project you're documenting, acts as replacement for
@@ -178,7 +178,7 @@ html_static_path = ['_static']
 #html_file_suffix = None
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'NLPServiceisdoc'
+htmlhelp_basename = 'NLPServicesdoc'
 
 
 # -- Options for LaTeX output ---------------------------------------------
@@ -198,7 +198,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  ('index', 'NLPServiceis.tex', u'NLP Serviceis Documentation',
+  ('index', 'NLPServices.tex', u'NLP Services Documentation',
    u'Robert Elwell and Tristan Chong', 'manual'),
 ]
 
@@ -228,7 +228,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('index', 'nlpserviceis', u'NLP Serviceis Documentation',
+    ('index', 'nlpServices', u'NLP Services Documentation',
      [u'Robert Elwell and Tristan Chong'], 1)
 ]
 
@@ -242,8 +242,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  ('index', 'NLPServiceis', u'NLP Serviceis Documentation',
-   u'Robert Elwell and Tristan Chong', 'NLPServiceis', 'One line description of project.',
+  ('index', 'NLPServices', u'NLP Services Documentation',
+   u'Robert Elwell and Tristan Chong', 'NLPServices', 'One line description of project.',
    'Miscellaneous'),
 ]
 

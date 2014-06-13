@@ -22,10 +22,3 @@ class RestfulResource(restful.Resource):
         :rtype: mixed
         """
         return self.get(doc_id).get(doc_id, backoff)
-
-import caching
-import title_confirmation
-import document_access
-import discourse
-import syntax
-import wikia_utils
