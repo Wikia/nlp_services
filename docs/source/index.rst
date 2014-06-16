@@ -8,11 +8,14 @@ Welcome to NLP Services' documentation!
 
 This package is designed to provide a general-purpose set of tools for reasoning over parses of article text.
 
+See :doc:`api` for API Documentation.
+
 Subpackages
 -----------
 
 .. toctree::
 
+    api
     nlp_services.authority
     nlp_services.caching
     nlp_services.discourse

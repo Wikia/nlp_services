@@ -30,13 +30,13 @@ class AllEntitiesSentimentAndCountsService(RestfulResource):
                 wiki_id, {}).items() +
             entities.WikiEntitiesService().get_value(
                 wiki_id, {}).items()
-            )
+        )
         sentiments = dict(
             sentiment.WikiEntitySentimentService().get_value(
                 wiki_id, {}).items() +
             sentiment.WpWikiEntitySentimentService().get_value(
                 wiki_id, {}).items()
-            )
+        )
 
         resp_dict = {}
         for s in sentiments:
