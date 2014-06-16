@@ -147,6 +147,39 @@ Wikia-Based Entities
    :resheader Content-Type: application/json
    :statuscode 200: no error
 
+.. http:get:: /Wiki/(str:wiki_id)/Pages/Entities/Wikia/DocumentCounts
+
+   Provides number of documents containing each Wikia-based entity
+
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /Wiki/831/Pages/Entities/Wikia/DocumentCounts HTTP/1.1
+      Host: nlp_services_api.example.com
+      Accept: application/json, text/javascript
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: application/json
+
+
+      {
+          "status": 200,
+          "831": {
+              50: ["foo", "bar", "baz"],
+              49: ["qux"]
+          }
+      }
+
+   :resheader Content-Type: application/json
+   :statuscode 200: no error
+
 
 
 Wikipedia-Based Entities
@@ -279,6 +312,39 @@ Wikipedia-Based Entities
                   "titles": ["foo", "bar"],
                   "redirects": {"baz": "bar"}
               }
+          }
+      }
+
+   :resheader Content-Type: application/json
+   :statuscode 200: no error
+
+.. http:get:: /Wiki/(str:wiki_id)/Pages/Entities/Wikipedia/DocumentCounts
+
+   Provides number of documents containing each Wikipedia-based entity
+
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /Wiki/831/Pages/Entities/Wikipedia/DocumentCounts HTTP/1.1
+      Host: nlp_services_api.example.com
+      Accept: application/json, text/javascript
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: application/json
+
+
+      {
+          "status": 200,
+          "831": {
+              50: ["foo", "bar", "baz"],
+              49: ["qux"]
           }
       }
 
@@ -424,7 +490,38 @@ Entities from All Sources
    :statuscode 200: no error
 
 
+.. http:get:: /Wiki/(str:wiki_id)/Pages/Entities/All/DocumentCounts
 
+   Provides number of documents containing each entity from all sources
+
+
+   **Example request**:
+
+   .. sourcecode:: http
+
+      GET /Wiki/831/Pages/Entities/All/DocumentCounts HTTP/1.1
+      Host: nlp_services_api.example.com
+      Accept: application/json, text/javascript
+
+   **Example response**:
+
+   .. sourcecode:: http
+
+      HTTP/1.1 200 OK
+      Vary: Accept
+      Content-Type: application/json
+
+
+      {
+          "status": 200,
+          "831": {
+              50: ["foo", "bar", "baz"],
+              49: ["qux"]
+          }
+      }
+
+   :resheader Content-Type: application/json
+   :statuscode 200: no error
 
 
 Miscellaneous

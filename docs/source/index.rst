@@ -15,6 +15,7 @@ Subpackages
 
 .. toctree::
 
+    api
     nlp_services.authority
     nlp_services.caching
     nlp_services.discourse

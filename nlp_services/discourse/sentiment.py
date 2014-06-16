@@ -37,7 +37,7 @@ class DocumentSentimentService(RestfulResource):
         :type doc_id: str
 
         :return: dictionary with response data
-        :rtype:dict
+        :rtype: dict
 
         """
 
