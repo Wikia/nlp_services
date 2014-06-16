@@ -32,7 +32,37 @@ def register_resources(api):
 
     """
     api.add_resource(discourse.AllEntitiesSentimentAndCountsService,
-                     '/Wiki/<string:wiki_id>/Pages/EntitiesSentimentAndCounts')
+                     '/Wiki/<string:wiki_id>/Entities/All/SentimentAndCounts')
+    api.add_resource(discourse.entities.WikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikia/Counts')
+    api.add_resource(discourse.entities.WpWikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikipedia/Counts')
+    api.add_resource(discourse.entities.CombinedWikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/All/Counts')
+    api.add_resource(discourse.entities.TopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikia/Top')
+    api.add_resource(discourse.entities.WpTopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikipedia/Top')
+    api.add_resource(discourse.entities.CombinedTopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/All/Top')
+    api.add_resource(discourse.entities.WikiPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia/Counts')
+    api.add_resource(discourse.entities.WpWikiPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia/Counts')
+    api.add_resource(discourse.entities.CombinedPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/All/Counts')
+    api.add_resource(discourse.entities.WikiPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia')
+    api.add_resource(discourse.entities.WpWikiPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia')
+    api.add_resource(discourse.entities.CombinedPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/All')
+    api.add_resource(syntax.WikiToPageHeadsService,
+                     '/Wiki/<string:wiki_id>/Pages/Heads')
+    api.add_resource(syntax.HeadsCountService,
+                     '/Wiki/<string:wiki_id>/Heads/Counts')
+    api.add_resource(syntax.TopHeadsService,
+                     '/Wiki/<string:wiki_id>/Heads/Top')
     api.add_resource(discourse.entities.CoreferenceCountsService,
                      '/Doc/<string:doc_id>/CorefrerenceCounts')
     api.add_resource(discourse.entities.EntitiesService,
@@ -47,30 +77,6 @@ def register_resources(api):
                      '/Doc/<string:doc_id>/Entities/Wikipedia/Counts')
     api.add_resource(discourse.entities.CombinedEntityCountsService,
                      '/Doc/<string:doc_id>/Entities/All/Counts')
-    api.add_resource(discourse.entities.WikiEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/Wikia')
-    api.add_resource(discourse.entities.WpWikiEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/Wikipedia')
-    api.add_resource(discourse.entities.CombinedWikiEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/All')
-    api.add_resource(discourse.entities.TopEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/Wikia/Top')
-    api.add_resource(discourse.entities.WpTopEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/Wikipedia/Top')
-    api.add_resource(discourse.entities.CombinedTopEntitiesService,
-                     '/Wiki/<string:wiki_id>/Entities/All/Top')
-    api.add_resource(discourse.entities.WikiPageEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia')
-    api.add_resource(discourse.entities.WpWikiPageEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia')
-    api.add_resource(discourse.entities.CombinedPageEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/All')
-    api.add_resource(discourse.entities.WikiPageToEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia/Counts')
-    api.add_resource(discourse.entities.WpWikiPageToEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia/Counts')
-    api.add_resource(discourse.entities.CombinedPageToEntitiesService,
-                     '/Wiki/<string:wiki_id>/Pages/Entities/All/Counts')
     api.add_resource(discourse.entities.EntityDocumentCountsService,
                      '/Doc/<string:doc_id>/Entities/Wikia/DocumentCounts')
     api.add_resource(discourse.entities.WpEntityDocumentCountsService,
@@ -93,15 +99,6 @@ def register_resources(api):
                      '/Doc/<string:doc_id>/VPs')
     api.add_resource(syntax.HeadsService,
                      '/Doc/<string:doc_id>/Heads')
-    api.add_resource(syntax.WikiToPageHeadsService,
-                     '/Wiki/<string:wiki_id>/Pages/Heads')
-    api.add_resource(syntax.HeadsCountService,
-                     '/Wiki/<string:wiki_id>/Heads/Counts')
-    api.add_resource(syntax.TopHeadsService,
-                     '/Wiki/<string:wiki_id>/Heads/Top')
-
-
-
 
 
 def main():
