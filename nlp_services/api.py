@@ -3,6 +3,7 @@ from flask.ext import restful
 from argparse import ArgumentParser
 from .caching import use_caching
 from .pooling import set_global_num_processes
+from . import discourse
 
 
 def get_args():
@@ -30,7 +31,54 @@ def register_resources(api):
     :type api: flask.ext.restful.api
 
     """
-    api.add_resource()
+    api.add_resource(discourse.AllEntitiesSentimentAndCountsService,
+                     '/Wiki/<string:wiki_id>/Pages/EntitiesSentimentAndCounts')
+    api.add_resource(discourse.entities.CoreferenceCountsService,
+                     '/Doc/<string:doc_id>/CorefrerenceCounts')
+    api.add_resource(discourse.entities.EntitiesService,
+                     '/Doc/<string:doc_id>/Entities/Wikia')
+    api.add_resource(discourse.entities.WpEntitiesService,
+                     '/Doc/<string:doc_id>/Entities/Wikipedia')
+    api.add_resource(discourse.entities.CombinedEntitiesService,
+                     '/Doc/<string:doc_id>/Entities/All')
+    api.add_resource(discourse.entities.EntityCountsService,
+                     '/Doc/<string:doc_id>/Entities/Wikia/Counts')
+    api.add_resource(discourse.entities.WpEntityCountsService,
+                     '/Doc/<string:doc_id>/Entities/Wikipedia/Counts')
+    api.add_resource(discourse.entities.CombinedEntityCountsService,
+                     '/Doc/<string:doc_id>/Entities/All/Counts')
+    api.add_resource(discourse.entities.WikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikia')
+    api.add_resource(discourse.entities.WpWikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikipedia')
+    api.add_resource(discourse.entities.CombinedWikiEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/All')
+    api.add_resource(discourse.entities.TopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikia/Top')
+    api.add_resource(discourse.entities.WpTopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/Wikipedia/Top')
+    api.add_resource(discourse.entities.CombinedTopEntitiesService,
+                     '/Wiki/<string:wiki_id>/Entities/All/Top')
+    api.add_resource(discourse.entities.WikiPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia')
+    api.add_resource(discourse.entities.WpWikiPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia')
+    api.add_resource(discourse.entities.CombinedPageEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/All')
+    api.add_resource(discourse.entities.WikiPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikia/Counts')
+    api.add_resource(discourse.entities.WpWikiPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/Wikipedia/Counts')
+    api.add_resource(discourse.entities.CombinedPageToEntitiesService,
+                     '/Wiki/<string:wiki_id>/Pages/Entities/All/Counts')
+    api.add_resource(discourse.entities.EntityDocumentCountsService,
+                     '/Doc/<string:doc_id>/Entities/Wikia/DocumentCounts')
+    api.add_resource(discourse.entities.WpEntityDocumentCountsService,
+                     '/Doc/<string:doc_id>/Entities/Wikipedia/DocumentCounts')
+    api.add_resource(discourse.entities.CombinedEntityDocumentCountsService,
+                     '/Doc/<string:doc_id>/Entities/All/DocumentCounts')
+
+
 
 
 def main():
