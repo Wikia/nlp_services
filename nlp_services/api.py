@@ -3,7 +3,7 @@ from flask.ext import restful
 from argparse import ArgumentParser
 from .caching import use_caching
 from .pooling import set_global_num_processes
-from . import discourse
+from . import discourse, document_access, syntax
 
 
 def get_args():
@@ -77,6 +77,29 @@ def register_resources(api):
                      '/Doc/<string:doc_id>/Entities/Wikipedia/DocumentCounts')
     api.add_resource(discourse.entities.CombinedEntityDocumentCountsService,
                      '/Doc/<string:doc_id>/Entities/All/DocumentCounts')
+    api.add_resource(discourse.sentiment.DocumentSentimentService,
+                     '/Doc/<string:doc_id>/Sentiment')
+    api.add_resource(discourse.sentiment.DocumentEntitySentimentService,
+                     '/Doc/<string:doc_id>/Entities/All/Sentiment')
+    api.add_resource(discourse.sentiment.WpDocumentEntitySentimentService,
+                     '/Doc/<string:doc_id>/Entities/Wikipedia/Sentiment')
+    api.add_resource(discourse.sentiment.WikiaDocumentEntitySentimentService,
+                     '/Doc/<string:doc_id>/Entities/Wikia/Sentiment')
+    api.add_resource(document_access.ParsedXmlService,
+                     '/Doc/<string:doc_id>/XML')
+    api.add_resource(syntax.AllNounPhrasesService,
+                     '/Doc/<string:doc_id>/NPs')
+    api.add_resource(syntax.AllVerbPhrasesService,
+                     '/Doc/<string:doc_id>/VPs')
+    api.add_resource(syntax.HeadsService,
+                     '/Doc/<string:doc_id>/Heads')
+    api.add_resource(syntax.WikiToPageHeadsService,
+                     '/Wiki/<string:wiki_id>/Pages/Heads')
+    api.add_resource(syntax.HeadsCountService,
+                     '/Wiki/<string:wiki_id>/Heads/Counts')
+    api.add_resource(syntax.TopHeadsService,
+                     '/Wiki/<string:wiki_id>/Heads/Top')
+
 
 
 

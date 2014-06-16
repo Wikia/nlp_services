@@ -12,7 +12,7 @@ from ..caching import cached_service_request
 from ..title_confirmation import preprocess
 from .. import RestfulResource
 from .. import document_access
-from .entities import CoreferenceCountsService, CombinedEntitiesService, WpEntitiesService
+from .entities import CoreferenceCountsService, CombinedEntitiesService, WpEntitiesService, EntitiesService
 
 
 USE_MULTIPROCESSING = False
@@ -142,10 +142,18 @@ class BaseDocumentEntitySentimentService(RestfulResource):
 
 class DocumentEntitySentimentService(BaseDocumentEntitySentimentService):
     """
-    Provides sentiment for wikia entities only
+    Provides sentiment for all entities
     """
 
     _entities_service = CombinedEntitiesService
+
+
+class WikiaDocumentEntitySentimentService(BaseDocumentEntitySentimentService):
+    """
+    Provides sentiment for wikia entities only
+    """
+
+    _entities_service = EntitiesService
 
 
 class WpDocumentEntitySentimentService(BaseDocumentEntitySentimentService):
@@ -220,7 +228,7 @@ class BaseWikiEntitySentimentService(RestfulResource):
 
 class WikiEntitySentimentService(BaseWikiEntitySentimentService):
     """
-    Uses Wikia entities
+    Uses all entities
     """
     _document_entity_sentiment_service = DocumentEntitySentimentService
 
@@ -230,3 +238,10 @@ class WpWikiEntitySentimentService(BaseWikiEntitySentimentService):
     Uses Wikipedia entities
     """
     _document_entity_sentiment_service = WpDocumentEntitySentimentService
+
+
+class WikiaWikiEntitySentimentService(BaseWikiEntitySentimentService):
+    """
+    Uses all entities
+    """
+    _document_entity_sentiment_service = WikiaDocumentEntitySentimentService
