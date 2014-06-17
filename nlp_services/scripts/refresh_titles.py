@@ -48,7 +48,7 @@ def main():
         print params['start']
         response = requests.get('http://search-s9:8983/solr/xwiki/select', params=params).json()
         p.map_async(prime_titles, [Namespace(wiki_id=doc['id'], **vars(args)) for doc in response['response']['docs']])
-        if response['numFound'] <= params['start'] + params['rows']:
+        if response['response']['numFound'] <= params['start'] + params['rows']:
             break
         params['start'] += params['rows']
 
