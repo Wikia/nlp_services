@@ -46,7 +46,7 @@ def main():
     params = dict(q="lang_s: en AND articles_i:[50 TO *]", rows=500, start=0, wt='json')
     while True:
         print params['start']
-        response = requests.get('http://search-s9:8983/solr/xwiki/select', params).json()
+        response = requests.get('http://search-s9:8983/solr/xwiki/select', params=params).json()
         p.map_async(prime_titles, [Namespace(wiki_id=doc['id'], **vars(args)) for doc in response['response']['docs']])
         if response['numFound'] <= params['start'] + params['rows']:
             break
