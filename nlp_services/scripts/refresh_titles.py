@@ -21,6 +21,7 @@ def get_args():
     ap = ArgumentParser(description="Re-primes the titles and redirects from all wikis with 50 or more articles")
     ap.add_argument('-p', '--processes', dest='processes', type=int, default=8)
     ap.add_argument('-r', '--refresh-cache', dest='refresh_cache', default=False, action='store_true')
+    ap.add_argument('-v', '--verbose', dest="verbose", default=False, action="store_true")
     return ap.parse_args()
 
 
@@ -33,8 +34,10 @@ def prime_titles(args):
 
     """
     use_caching(is_write_only=args.refresh_cache)
-    AllTitlesService().get(args.wiki_id)
-    RedirectsService().get(args.wiki_id)
+    at = AllTitlesService().get_value(args.wiki_id)
+    rs = RedirectsService().get_value(args.wiki_id)
+    if args.verbose:
+        print args.wiki_id, len(at), "titles", len(rs), "redirects"
 
 
 def main():
@@ -45,7 +48,8 @@ def main():
     p = Pool(processes=args.processes)
     params = dict(q="lang_s: en AND articles_i:[50 TO *]", rows=500, start=0, wt='json')
     while True:
-        print params['start']
+        if args.verbose:
+            print params['start']
         response = requests.get('http://search-s9:8983/solr/xwiki/select', params=params).json()
         p.map_async(prime_titles, [Namespace(wiki_id=doc['id'], **vars(args)) for doc in response['response']['docs']])
         if response['response']['numFound'] <= params['start'] + params['rows']:
