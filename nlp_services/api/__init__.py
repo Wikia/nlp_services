@@ -1,9 +1,9 @@
 from flask import Flask
 from flask.ext import restful
 from argparse import ArgumentParser
-from .caching import use_caching
-from .pooling import set_global_num_processes
-from . import discourse, document_access, syntax
+from ..caching import use_caching
+from ..pooling import set_global_num_processes
+from .. import discourse, document_access, syntax
 
 
 def get_args():
@@ -101,9 +101,12 @@ def register_resources(api):
                      '/Doc/<string:doc_id>/CorefererenceCounts')
 
 
-def main():
+def get_app():
     """
-    Main method, runs the app
+    Access the app so we can hopefully get it working with uwsgi in another script
+
+    :return: flask app
+    :rtype: flask.Flask
     """
     args = get_args()
     if args.cache:
@@ -114,7 +117,14 @@ def main():
     app = Flask(__name__)
     api = restful.api(app)
     register_resources(api)
-    app.run()
+    return app
+
+
+def main():
+    """
+    Main method, runs the app
+    """
+    get_app().run()
 
 
 if __name__ == '__main__':
