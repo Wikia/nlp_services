@@ -115,7 +115,7 @@ def get_app():
     set_global_num_processes(args.processes)
 
     app = Flask(__name__)
-    api = restful.api(app)
+    api = restful.Api(app)
     register_resources(api)
     return app
 
